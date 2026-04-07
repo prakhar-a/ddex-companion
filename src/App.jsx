@@ -1,11 +1,13 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
-import { Send, RotateCcw, History, X, Trash2 } from 'lucide-react'
+import { Send, RotateCcw, History, X, Trash2, Info } from 'lucide-react'
 import { sendMessage, parseDirectives } from './utils/openrouter'
 import { useLivePrices } from './hooks/useCoinGecko'
-import { PRODUCTS, PRODUCT_LIST, SUGGESTED_PROMPTS } from './data/products'
+import { PRODUCTS, PRODUCT_LIST } from './data/products'
+import { USERS, DEFAULT_USER } from './data/users'
 import ProductCard from './components/ProductCard'
 import AnalysisPanel from './components/AnalysisPanel'
 import SgBenjiCard from './components/SgBenjiCard'
+import UserSwitcher from './components/UserSwitcher'
 
 const CRYPTO_IDS = ['bitcoin', 'ethereum', 'ripple-usd']
 const SESSIONS_KEY = 'ddex_chat_sessions'
@@ -317,6 +319,8 @@ export default function App() {
   const [currentSessionId, setCurrentSessionId] = useState(null)
   const [sessions, setSessions] = useState(() => loadSessions())
   const [showHistory, setShowHistory] = useState(false)
+  const [showInfo, setShowInfo] = useState(false)
+  const [currentUser, setCurrentUser] = useState(DEFAULT_USER)
   const bottomRef = useRef(null)
   const inputRef = useRef(null)
   const { prices, loading: pricesLoading } = useLivePrices(CRYPTO_IDS)
@@ -405,6 +409,14 @@ export default function App() {
     if (id === currentSessionId) reset()
   }
 
+  const handleUserSwitch = (user) => {
+    setCurrentUser(user)
+    setMessages([])
+    setInput('')
+    setCurrentSessionId(null)
+    setTimeout(() => inputRef.current?.focus(), 100)
+  }
+
   const isEmpty = messages.length === 0
 
   return (
@@ -440,6 +452,16 @@ export default function App() {
         <div className="flex items-center gap-4">
           <LiveTicker prices={prices} />
 
+          {/* About button */}
+          <button
+            onClick={() => setShowInfo(true)}
+            className="flex items-center gap-1.5 text-[11px] text-dbs-muted hover:text-dbs-text transition-colors"
+            title="About DDEx"
+          >
+            <Info size={13} />
+            <span className="hidden sm:inline">About</span>
+          </button>
+
           {/* History button */}
           <button
             onClick={() => setShowHistory(true)}
@@ -473,35 +495,22 @@ export default function App() {
         />
       )}
 
-      {/* ── Messages ── */}
-      <div className="flex-1 overflow-y-auto">
-        {isEmpty ? (
-
-          /* Landing */
-          <div className="max-w-5xl mx-auto px-4 py-10">
-            {/* Hero */}
-            <div className="flex items-start gap-6 mb-8">
-              <div className="flex-shrink-0">
-                <div className="w-16 h-16 bg-dbs-red rounded flex items-center justify-center">
-                  <span className="text-white text-2xl font-bold">D</span>
-                </div>
-              </div>
-              <div>
-                <h1 className="text-2xl font-semibold text-dbs-text mb-1">DDEx AI Companion</h1>
-                <div className="w-8 h-0.5 bg-dbs-red mb-2" />
-                <p className="text-sm text-dbs-muted leading-relaxed">
-                  Your intelligent guide to DBS Digital Exchange — Asia's first bank-backed digital asset ecosystem. Ask about products, get live prices, run technical analysis, or explore the full tokenised asset universe.
-                </p>
-              </div>
-            </div>
-
-            {/* About DDEx */}
-            <div className="bg-white border border-dbs-border rounded shadow-dbs p-5 mb-4">
-              <div className="flex items-center gap-2 mb-3">
+      {/* ── Info Panel ── */}
+      {showInfo && (
+        <div className="fixed inset-0 z-50 flex">
+          <div className="absolute inset-0 bg-black/30" onClick={() => setShowInfo(false)} />
+          <div className="relative mr-auto w-full max-w-sm bg-white h-full shadow-xl flex flex-col overflow-y-auto">
+            <div className="flex items-center justify-between px-5 py-4 border-b border-dbs-border">
+              <div className="flex items-center gap-2">
                 <div className="w-1 h-4 bg-dbs-red rounded-full" />
-                <span className="text-xs font-semibold text-dbs-text uppercase tracking-wider">About DBS Digital Exchange</span>
+                <span className="text-sm font-semibold text-dbs-text">About DBS Digital Exchange</span>
               </div>
-              <p className="text-sm text-dbs-muted leading-relaxed mb-4">
+              <button onClick={() => setShowInfo(false)} className="text-dbs-muted hover:text-dbs-text">
+                <X size={16} />
+              </button>
+            </div>
+            <div className="p-5 space-y-5 flex-1">
+              <p className="text-sm text-dbs-muted leading-relaxed">
                 DBS Digital Exchange (DDEx) is an institutional-grade platform to <strong className="text-dbs-text">tokenise, trade and custody digital assets</strong>. Built on the trust and infrastructure of DBS Bank, DDEx enables accredited and institutional investors to access fully regulated digital asset services — from cryptocurrency trading to security token offerings.
               </p>
               <div className="grid grid-cols-3 gap-3">
@@ -516,76 +525,180 @@ export default function App() {
                   </div>
                 ))}
               </div>
-            </div>
-
-            {/* Services */}
-            <div className="grid grid-cols-3 gap-3 mb-4">
-              {[
-                { icon: '⚡', title: 'Crypto Trading', desc: 'BTC, ETH, BCH, DOT, ADA, XRP, USDC, RLUSD — with SGD & USD pairs' },
-                { icon: '📋', title: 'Request for Quote', desc: 'Execute large block trades with minimal price slippage via RFQ' },
-                { icon: '🔐', title: 'Security Tokens', desc: 'Tokenised traditional securities with blockchain-based settlement' },
-              ].map(({ icon, title, desc }) => (
-                <div key={title} className="bg-white border border-dbs-border rounded shadow-dbs p-4">
-                  <div className="text-xl mb-2">{icon}</div>
-                  <div className="text-xs font-semibold text-dbs-text mb-1">{title}</div>
-                  <div className="text-[11px] text-dbs-muted leading-relaxed">{desc}</div>
+              <div>
+                <div className="flex items-center gap-2 mb-3">
+                  <div className="w-1 h-4 bg-dbs-red/50 rounded-full" />
+                  <span className="text-xs font-semibold text-dbs-text uppercase tracking-wider">Services</span>
                 </div>
-              ))}
-            </div>
-
-            {/* Eligibility */}
-            <div className="bg-white border border-dbs-border rounded shadow-dbs p-4 mb-4">
-              <div className="flex items-center gap-2 mb-2">
-                <div className="w-1 h-4 bg-dbs-red/50 rounded-full" />
-                <span className="text-xs font-semibold text-dbs-muted uppercase tracking-wider">Eligibility</span>
+                <div className="space-y-3">
+                  {[
+                    { icon: '⚡', title: 'Crypto Trading', desc: 'BTC, ETH, BCH, DOT, ADA, XRP, USDC, RLUSD — with SGD & USD pairs' },
+                    { icon: '📋', title: 'Request for Quote', desc: 'Execute large block trades with minimal price slippage via RFQ' },
+                    { icon: '🔐', title: 'Security Tokens', desc: 'Tokenised traditional securities with blockchain-based settlement' },
+                  ].map(({ icon, title, desc }) => (
+                    <div key={title} className="bg-white border border-dbs-border rounded p-4">
+                      <div className="text-xl mb-2">{icon}</div>
+                      <div className="text-xs font-semibold text-dbs-text mb-1">{title}</div>
+                      <div className="text-[11px] text-dbs-muted leading-relaxed">{desc}</div>
+                    </div>
+                  ))}
+                </div>
               </div>
-              <div className="flex flex-wrap gap-2">
-                {['Financial Institutions', 'Corporate Accredited Investors', 'Family Offices', 'Professional Market Makers', 'DBS Private Bank Clients'].map(label => (
-                  <span key={label} className="text-[11px] px-2.5 py-1 bg-dbs-red-light border border-dbs-red/20 rounded text-dbs-muted">
-                    {label}
-                  </span>
+              <div>
+                <div className="flex items-center gap-2 mb-2">
+                  <div className="w-1 h-4 bg-dbs-red/50 rounded-full" />
+                  <span className="text-xs font-semibold text-dbs-muted uppercase tracking-wider">Eligibility</span>
+                </div>
+                <div className="flex flex-wrap gap-2">
+                  {['Financial Institutions', 'Corporate Accredited Investors', 'Family Offices', 'Professional Market Makers', 'DBS Private Bank Clients'].map(label => (
+                    <span key={label} className="text-[11px] px-2.5 py-1 bg-dbs-red-light border border-dbs-red/20 rounded text-dbs-muted">
+                      {label}
+                    </span>
+                  ))}
+                </div>
+              </div>
+              <p className="text-[10px] text-dbs-faint leading-relaxed text-center">
+                For accredited and institutional investors only · Not financial advice · Capital at risk · MAS-regulated · Not available to U.S. persons
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ── Main body: chat + portfolio sidebar ── */}
+      <div className="flex-1 flex overflow-hidden">
+
+        {/* ── Messages ── */}
+        <div className="flex-1 overflow-y-auto">
+          {isEmpty ? (
+
+            /* Landing */
+            <div className="max-w-3xl mx-auto px-4 py-10">
+              {/* Hero */}
+              <div className="flex items-start gap-6 mb-8">
+                <div className="flex-shrink-0">
+                  <div className="w-16 h-16 bg-dbs-red rounded flex items-center justify-center">
+                    <span className="text-white text-2xl font-bold">D</span>
+                  </div>
+                </div>
+                <div>
+                  <h1 className="text-2xl font-semibold text-dbs-text mb-1">
+                    {currentUser.id === 'new'
+                      ? 'Welcome to DDEx AI Companion'
+                      : `Welcome back, ${currentUser.name.split(' ')[0]}`}
+                  </h1>
+                  <div className="w-8 h-0.5 bg-dbs-red mb-2" />
+                  <p className="text-sm text-dbs-muted leading-relaxed">
+                    {currentUser.id === 'new'
+                      ? 'Your intelligent guide to DBS Digital Exchange — Asia\'s first bank-backed digital asset ecosystem. Ask about products, get live prices, run technical analysis, or explore the full tokenised asset universe.'
+                      : currentUser.id === 'alex'
+                      ? 'Your family office holds BTC and ETH across multiple tranches. Get live prices, technical analysis, or explore structured product alternatives.'
+                      : currentUser.id === 'priya'
+                      ? 'Your USD 12M sgBENJI position is accruing daily yield in a tokenised money market fund. Ask about performance, collateral use, or yield optimisation.'
+                      : 'Your SGD 1M DBS Digital Bond 2026 position is generating semi-annual coupons. Ask about upcoming payments, credit analysis, or explore other fixed-income products.'
+                    }
+                  </p>
+                </div>
+              </div>
+
+              {/* Suggested prompts */}
+              <div className="space-y-2 mb-5">
+                <div className="flex items-center gap-2 mb-2">
+                  <div className="text-[10px] text-dbs-faint uppercase tracking-wider">Suggested for you</div>
+                  {currentUser.id !== 'new' && (
+                    <div
+                      className="text-[10px] px-2 py-0.5 rounded-full font-semibold"
+                      style={{ backgroundColor: currentUser.color + '22', color: currentUser.color }}
+                    >
+                      {currentUser.role}
+                    </div>
+                  )}
+                </div>
+                {currentUser.suggestedPrompts.map((prompt, i) => (
+                  <button
+                    key={i}
+                    onClick={() => handleSend(prompt)}
+                    disabled={loading}
+                    className="w-full text-left px-4 py-3 bg-white hover:bg-dbs-red-light border border-dbs-border hover:border-dbs-red/30 rounded text-sm text-dbs-muted hover:text-dbs-text transition-all disabled:opacity-50 shadow-dbs"
+                  >
+                    <span className="text-dbs-red mr-2 font-semibold">→</span>
+                    {prompt}
+                  </button>
                 ))}
               </div>
             </div>
 
-            {/* Suggested prompts */}
-            <div className="space-y-2 mb-5">
-              <div className="text-[10px] text-dbs-faint uppercase tracking-wider mb-2">Suggested questions</div>
-              {SUGGESTED_PROMPTS.map((prompt, i) => (
-                <button
-                  key={i}
-                  onClick={() => handleSend(prompt)}
-                  disabled={loading}
-                  className="w-full text-left px-4 py-3 bg-white hover:bg-dbs-red-light border border-dbs-border hover:border-dbs-red/30 rounded text-sm text-dbs-muted hover:text-dbs-text transition-all disabled:opacity-50 shadow-dbs"
-                >
-                  <span className="text-dbs-red mr-2 font-semibold">→</span>
-                  {prompt}
-                </button>
+          ) : (
+
+            /* Chat messages */
+            <div className="max-w-3xl mx-auto px-4 py-6">
+              {messages.map((msg, i) => (
+                <MessageBubble key={i} msg={msg} priceData={prices} />
               ))}
+              {loading && <TypingIndicator />}
+              <div ref={bottomRef} />
             </div>
 
-            <div className="text-[10px] text-dbs-faint text-center leading-relaxed">
-              For accredited and institutional investors only · Not financial advice · Capital at risk · MAS-regulated · Not available to U.S. persons
+          )}
+        </div>
+
+        {/* ── Portfolio Sidebar (permanent, right) ── */}
+        {currentUser.transactions.length > 0 && (
+          <div className="w-72 flex-shrink-0 border-l border-dbs-border bg-white overflow-y-auto">
+            <div className="p-4">
+              <div className="flex items-center justify-between mb-3">
+                <div className="flex items-center gap-2">
+                  <div className="w-1 h-4 rounded-full" style={{ backgroundColor: currentUser.color }} />
+                  <span className="text-xs font-semibold text-dbs-text uppercase tracking-wider">Your Portfolio</span>
+                </div>
+                <span
+                  className="text-[10px] px-2 py-0.5 rounded-full font-semibold"
+                  style={{ backgroundColor: currentUser.color + '22', color: currentUser.color }}
+                >
+                  {currentUser.transactions.length} transactions
+                </span>
+              </div>
+              <div className="space-y-1">
+                {currentUser.transactions.slice().reverse().map((tx, i) => {
+                  const typeStyle = {
+                    BUY:    { bg: '#dcfce7', color: '#16a34a' },
+                    SELL:   { bg: '#fee2e2', color: '#dc2626' },
+                    SWAP:   { bg: '#dbeafe', color: '#2563eb' },
+                    YIELD:  { bg: '#fef9c3', color: '#a16207' },
+                    COUPON: { bg: '#fef9c3', color: '#a16207' },
+                  }[tx.type] || { bg: '#f3f4f6', color: '#6b7280' }
+                  return (
+                    <div key={i} className="flex items-center gap-2 py-2 border-b border-dbs-border/40 last:border-0">
+                      <span
+                        className="text-[9px] font-bold px-1.5 py-0.5 rounded flex-shrink-0 w-12 text-center"
+                        style={{ backgroundColor: typeStyle.bg, color: typeStyle.color }}
+                      >
+                        {tx.type}
+                      </span>
+                      <div className="flex-1 min-w-0">
+                        <div className="text-xs font-semibold text-dbs-text truncate">{tx.asset}</div>
+                        {tx.note && <div className="text-[10px] text-dbs-faint truncate">{tx.note}</div>}
+                      </div>
+                      <div className="text-right flex-shrink-0">
+                        <div className="text-xs font-mono text-dbs-text">{tx.valueFmt}</div>
+                        <div className="text-[10px] text-dbs-faint">{tx.date}</div>
+                      </div>
+                    </div>
+                  )
+                })}
+              </div>
             </div>
           </div>
-
-        ) : (
-
-          /* Chat messages */
-          <div className="max-w-5xl mx-auto px-4 py-6">
-            {messages.map((msg, i) => (
-              <MessageBubble key={i} msg={msg} priceData={prices} />
-            ))}
-            {loading && <TypingIndicator />}
-            <div ref={bottomRef} />
-          </div>
-
         )}
+
       </div>
+
+      {/* ── User Switcher ── */}
+      <UserSwitcher currentUser={currentUser} onSwitch={handleUserSwitch} />
 
       {/* ── Input ── */}
       <div className="flex-shrink-0 bg-white border-t border-dbs-border px-4 py-4">
-        <div className="max-w-5xl mx-auto">
+        <div className="max-w-3xl mx-auto">
           <div className="flex items-end gap-3 bg-white border border-dbs-border rounded px-4 py-3 focus-within:border-dbs-border-md transition-colors shadow-dbs">
             <textarea
               ref={inputRef}

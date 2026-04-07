@@ -1,0 +1,18 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "DDEx Companion — Dev",
+      "runtimeExecutable": "/opt/homebrew/bin/node",
+      "runtimeArgs": ["/Users/prakhara/ddex-companion/node_modules/.bin/vite"],
+      "port": 5173,
+      "autoPort": true
+    },
+    {
+      "name": "DDEx Companion — Preview",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run", "preview"],
+      "port": 4173
+    }
+  ]
+}
