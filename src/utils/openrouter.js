@@ -15,7 +15,7 @@ JSON shape:
 }
 
 Types and their extra fields:
-- "show_products"      → { "filter": "all" | "yield" | "crypto" | "sto" | "stable" }
+- "show_products"      → { "filter": "all" | "yield" | "crypto" | "sto" | "stable" | "btc" | "eth" }
 - "show_product"       → { "id": "btc" | "eth" | "rlusd" | "sgbenji" | "btcnote" | "dbsbond" | "apacpe" }
 - "show_analysis"      → { "coin": "btc" | "eth" }
 - "show_sgbenji"       → {}
@@ -24,7 +24,7 @@ Types and their extra fields:
 - "general"            → {}
 
 Classification rules:
-- "show_products": user wants to browse/see/compare multiple products or asks what DDEx offers
+- "show_products": user wants to browse/see/compare multiple products or asks what DDEx offers. Use "btc" filter when asking about BTC exposure/products, "eth" for ETH exposure/products.
 - "show_product": user asks about exactly one named product (not sgBENJI AUM/stats — that is show_sgbenji)
 - "show_analysis": user asks for chart, price analysis, or technical analysis of BTC or ETH
 - "show_sgbenji": user asks specifically about sgBENJI AUM, holders, chain distribution, or fund stats
@@ -209,10 +209,9 @@ Investor profile:
 ${productClause}
 
 Deliver a structured suitability assessment:
-1. **Investor Profile Summary** — infer risk appetite and investment objectives from role and activity
-2. **Suitable Products** — list DDEx products well-matched to this profile with a brief rationale for each
-3. **Products Requiring Caution** — list products that may be less suitable and explain why
-4. **Key Considerations** — 2–3 factors this investor should weigh before investing
+1. **Suitable Products** — list DDEx products well-matched to this profile with a brief rationale for each
+2. **Products Requiring Caution** — list products that may be less suitable and explain why
+3. **Key Considerations** — 2–3 factors this investor should weigh before investing
 
 Base all product facts strictly on the Knowledge Base. Be objective — note both opportunities and risks.
 Close with: *Suitability assessments are indicative and educational only. Please speak to your DBS Relationship Manager for personalised advice.*`
