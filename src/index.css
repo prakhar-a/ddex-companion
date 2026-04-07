@@ -43,6 +43,13 @@ html, body, #root {
 }
 .live-dot { animation: pulse-dot 2s infinite; }
 
+/* DBS dot-grid background for main content area */
+.dbs-dot-grid {
+  background-color: #F4F4F4;
+  background-image: radial-gradient(circle, #C8C8C8 1px, transparent 1px);
+  background-size: 22px 22px;
+}
+
 /* DBS red underline accent for headings */
 .dbs-heading {
   color: #2E2E2E;
