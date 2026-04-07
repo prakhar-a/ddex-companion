@@ -94,6 +94,49 @@ export async function fetchFearGreed() {
   }
 }
 
+export async function fetchCoinSocialData(coingeckoId) {
+  try {
+    const data = await fetchWithCache(
+      `${BASE}/coins/${coingeckoId}?localization=false&tickers=false&community_data=true&developer_data=false`,
+      300000
+    )
+    const c = data.community_data || {}
+    return {
+      twitterFollowers: c.twitter_followers,
+      redditSubscribers: c.reddit_subscribers,
+      redditActivePosts48h: c.reddit_average_posts_48h,
+      redditActiveComments48h: c.reddit_average_comments_48h,
+      redditAccountsActive48h: c.reddit_accounts_active_48h,
+      sentimentVotesUp: data.sentiment_votes_up_percentage,
+      sentimentVotesDown: data.sentiment_votes_down_percentage,
+    }
+  } catch (e) {
+    console.warn('Social data fetch failed', e)
+    return null
+  }
+}
+
+const ETF_DATA = {
+  bitcoin: [
+    { name: 'BlackRock IBIT', ticker: 'IBIT', aum: 40.2, flow24h: 0.312, flow7d: 1.24 },
+    { name: 'Grayscale GBTC', ticker: 'GBTC', aum: 20.1, flow24h: -0.089, flow7d: -0.34 },
+    { name: 'Fidelity FBTC', ticker: 'FBTC', aum: 11.8, flow24h: 0.178, flow7d: 0.67 },
+    { name: 'ARK 21Shares ARKB', ticker: 'ARKB', aum: 3.6, flow24h: 0.054, flow7d: 0.21 },
+    { name: 'Bitwise BITB', ticker: 'BITB', aum: 2.4, flow24h: 0.031, flow7d: 0.12 },
+  ],
+  ethereum: [
+    { name: 'BlackRock ETHA', ticker: 'ETHA', aum: 0.92, flow24h: 0.018, flow7d: 0.067 },
+    { name: 'Fidelity FETH', ticker: 'FETH', aum: 0.58, flow24h: 0.012, flow7d: 0.043 },
+    { name: 'Grayscale ETHE', ticker: 'ETHE', aum: 0.42, flow24h: -0.024, flow7d: -0.089 },
+    { name: 'Bitwise ETHW', ticker: 'ETHW', aum: 0.24, flow24h: 0.006, flow7d: 0.021 },
+    { name: '21Shares CETH', ticker: 'CETH', aum: 0.08, flow24h: 0.002, flow7d: 0.007 },
+  ],
+}
+
+export function getETFFlows(coingeckoId) {
+  return ETF_DATA[coingeckoId] ?? null
+}
+
 // Generate mock chart data for non-crypto products
 export function generateMockHistory(baseValue, days, volatility = 0.002, trend = 0.0001) {
   const points = []
