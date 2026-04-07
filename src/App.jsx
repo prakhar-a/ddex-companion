@@ -79,6 +79,12 @@ function filterProducts(filter) {
     case 'stable':
     case 'stablecoin':
       return PRODUCT_LIST.filter(p => p.category === 'Stablecoin' || p.id === 'sgbenji')
+    case 'btc':
+    case 'bitcoin':
+      return PRODUCT_LIST.filter(p => p.id === 'btc' || p.id === 'btcnote')
+    case 'eth':
+    case 'ethereum':
+      return PRODUCT_LIST.filter(p => p.id === 'eth')
     default:
       return PRODUCT_LIST
   }
