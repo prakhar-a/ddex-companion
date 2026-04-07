@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
-import { Send, RotateCcw } from 'lucide-react'
+import { Send, RotateCcw, History, X, Trash2 } from 'lucide-react'
 import { sendMessage, parseDirectives } from './utils/openrouter'
 import { useLivePrices } from './hooks/useCoinGecko'
 import { PRODUCTS, PRODUCT_LIST, SUGGESTED_PROMPTS } from './data/products'
@@ -8,6 +8,63 @@ import AnalysisPanel from './components/AnalysisPanel'
 import SgBenjiCard from './components/SgBenjiCard'
 
 const CRYPTO_IDS = ['bitcoin', 'ethereum', 'ripple-usd']
+const SESSIONS_KEY = 'ddex_chat_sessions'
+const MAX_SESSIONS = 30
+
+// ── Session helpers ──────────────────────────────────────────────────────────
+
+function genId() {
+  return `${Date.now()}-${Math.random().toString(36).slice(2, 7)}`
+}
+
+function loadSessions() {
+  try {
+    return JSON.parse(localStorage.getItem(SESSIONS_KEY) || '[]')
+  } catch {
+    return []
+  }
+}
+
+function persistSessions(sessions) {
+  try {
+    localStorage.setItem(SESSIONS_KEY, JSON.stringify(sessions))
+  } catch { /* storage full — silently skip */ }
+}
+
+function upsertSession(session) {
+  const sessions = loadSessions()
+  const idx = sessions.findIndex(s => s.id === session.id)
+  if (idx >= 0) {
+    sessions[idx] = session
+  } else {
+    sessions.unshift(session)
+    if (sessions.length > MAX_SESSIONS) sessions.pop()
+  }
+  persistSessions(sessions)
+}
+
+function removeSession(id) {
+  persistSessions(loadSessions().filter(s => s.id !== id))
+}
+
+function sessionTitle(messages) {
+  const first = messages.find(m => m.role === 'user')
+  if (!first) return 'Untitled'
+  return first.content.length > 55 ? first.content.slice(0, 52) + '…' : first.content
+}
+
+function formatDate(iso) {
+  const d = new Date(iso)
+  const now = new Date()
+  const diffMs = now - d
+  const diffDays = Math.floor(diffMs / 86400000)
+  if (diffDays === 0) return 'Today'
+  if (diffDays === 1) return 'Yesterday'
+  if (diffDays < 7) return `${diffDays}d ago`
+  return d.toLocaleDateString('en-SG', { day: 'numeric', month: 'short' })
+}
+
+// ── Product helpers ──────────────────────────────────────────────────────────
 
 function filterProducts(filter) {
   switch (filter?.toLowerCase()) {
@@ -24,6 +81,8 @@ function filterProducts(filter) {
       return PRODUCT_LIST
   }
 }
+
+// ── Sub-components ───────────────────────────────────────────────────────────
 
 function RichContent({ directives, priceData }) {
   if (!directives?.length) return null
@@ -173,22 +232,123 @@ function DbsLogo() {
   )
 }
 
+// ── History Sidebar ──────────────────────────────────────────────────────────
+
+function HistorySidebar({ sessions, currentId, onLoad, onDelete, onClose }) {
+  return (
+    <>
+      {/* Backdrop */}
+      <div
+        className="fixed inset-0 bg-black/20 z-30"
+        onClick={onClose}
+      />
+      {/* Panel */}
+      <div className="fixed top-0 left-0 h-full w-72 bg-white border-r border-dbs-border shadow-lg z-40 flex flex-col">
+        {/* Header */}
+        <div className="flex items-center justify-between px-4 py-3.5 border-b border-dbs-border flex-shrink-0">
+          <div className="flex items-center gap-2">
+            <History size={14} className="text-dbs-red" />
+            <span className="text-sm font-semibold text-dbs-text">Chat History</span>
+          </div>
+          <button
+            onClick={onClose}
+            className="text-dbs-muted hover:text-dbs-text transition-colors"
+          >
+            <X size={15} />
+          </button>
+        </div>
+
+        {/* Session list */}
+        <div className="flex-1 overflow-y-auto py-2">
+          {sessions.length === 0 ? (
+            <div className="px-4 py-8 text-center">
+              <History size={28} className="text-dbs-faint mx-auto mb-2" />
+              <p className="text-xs text-dbs-faint">No past conversations yet.</p>
+              <p className="text-[10px] text-dbs-faint mt-1">Start chatting and they'll appear here.</p>
+            </div>
+          ) : (
+            sessions.map(s => {
+              const isActive = s.id === currentId
+              return (
+                <div
+                  key={s.id}
+                  className={`group flex items-start gap-2 px-3 py-2.5 mx-1 rounded cursor-pointer transition-colors ${
+                    isActive
+                      ? 'bg-dbs-red-light border border-dbs-red/20'
+                      : 'hover:bg-gray-50'
+                  }`}
+                  onClick={() => { onLoad(s); onClose() }}
+                >
+                  <div className="flex-1 min-w-0">
+                    <p className={`text-xs font-medium truncate leading-snug ${isActive ? 'text-dbs-red' : 'text-dbs-text'}`}>
+                      {sessionTitle(s.messages)}
+                    </p>
+                    <p className="text-[10px] text-dbs-faint mt-0.5">
+                      {formatDate(s.updatedAt)} · {s.messages.length} msg{s.messages.length !== 1 ? 's' : ''}
+                    </p>
+                  </div>
+                  <button
+                    onClick={e => { e.stopPropagation(); onDelete(s.id) }}
+                    className="flex-shrink-0 mt-0.5 text-dbs-faint hover:text-dbs-red opacity-0 group-hover:opacity-100 transition-all"
+                    title="Delete"
+                  >
+                    <Trash2 size={12} />
+                  </button>
+                </div>
+              )
+            })
+          )}
+        </div>
+
+        <div className="px-4 py-3 border-t border-dbs-border text-[10px] text-dbs-faint text-center">
+          Stored locally · Up to {MAX_SESSIONS} conversations
+        </div>
+      </div>
+    </>
+  )
+}
+
+// ── Main App ─────────────────────────────────────────────────────────────────
+
 export default function App() {
   const [messages, setMessages] = useState([])
   const [input, setInput] = useState('')
   const [loading, setLoading] = useState(false)
+  const [currentSessionId, setCurrentSessionId] = useState(null)
+  const [sessions, setSessions] = useState(() => loadSessions())
+  const [showHistory, setShowHistory] = useState(false)
   const bottomRef = useRef(null)
   const inputRef = useRef(null)
   const { prices, loading: pricesLoading } = useLivePrices(CRYPTO_IDS)
 
+  // Auto-scroll
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' })
   }, [messages, loading])
+
+  // Auto-save current session whenever messages change
+  useEffect(() => {
+    if (messages.length === 0) return
+    const id = currentSessionId
+    if (!id) return
+    const session = {
+      id,
+      messages,
+      createdAt: sessions.find(s => s.id === id)?.createdAt || new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+    }
+    upsertSession(session)
+    setSessions(loadSessions())
+  }, [messages]) // eslint-disable-line react-hooks/exhaustive-deps
 
   const handleSend = useCallback(async (text) => {
     const content = (text || input).trim()
     if (!content || loading) return
     setInput('')
+
+    // Create a session ID on the first message of a new chat
+    const sessionId = currentSessionId || genId()
+    if (!currentSessionId) setCurrentSessionId(sessionId)
 
     const userMsg = { role: 'user', content }
     setMessages(prev => [...prev, userMsg])
@@ -217,7 +377,7 @@ export default function App() {
       setLoading(false)
       setTimeout(() => inputRef.current?.focus(), 100)
     }
-  }, [input, messages, loading])
+  }, [input, messages, loading, currentSessionId])
 
   const handleKeyDown = (e) => {
     if (e.key === 'Enter' && !e.shiftKey) {
@@ -229,7 +389,20 @@ export default function App() {
   const reset = () => {
     setMessages([])
     setInput('')
+    setCurrentSessionId(null)
     setTimeout(() => inputRef.current?.focus(), 100)
+  }
+
+  const handleLoadSession = (session) => {
+    setMessages(session.messages)
+    setCurrentSessionId(session.id)
+    setInput('')
+  }
+
+  const handleDeleteSession = (id) => {
+    removeSession(id)
+    setSessions(loadSessions())
+    if (id === currentSessionId) reset()
   }
 
   const isEmpty = messages.length === 0
@@ -264,8 +437,19 @@ export default function App() {
           </div>
         </div>
 
-        <div className="flex items-center gap-5">
+        <div className="flex items-center gap-4">
           <LiveTicker prices={prices} />
+
+          {/* History button */}
+          <button
+            onClick={() => setShowHistory(true)}
+            className="flex items-center gap-1.5 text-[11px] text-dbs-muted hover:text-dbs-text transition-colors"
+            title="Chat history"
+          >
+            <History size={13} />
+            <span className="hidden sm:inline">History</span>
+          </button>
+
           {messages.length > 0 && (
             <button
               onClick={reset}
@@ -277,6 +461,17 @@ export default function App() {
           )}
         </div>
       </header>
+
+      {/* ── History Sidebar ── */}
+      {showHistory && (
+        <HistorySidebar
+          sessions={sessions}
+          currentId={currentSessionId}
+          onLoad={handleLoadSession}
+          onDelete={handleDeleteSession}
+          onClose={() => setShowHistory(false)}
+        />
+      )}
 
       {/* ── Messages ── */}
       <div className="flex-1 overflow-y-auto">
