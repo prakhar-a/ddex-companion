@@ -148,7 +148,7 @@ function MessageBubble({ msg, priceData }) {
           className={`rounded px-4 py-3 text-sm leading-relaxed ${
             isUser
               ? 'bg-dbs-red text-white rounded-tr-sm ml-auto w-fit'
-              : 'bg-white text-dbs-text rounded-tl-sm border border-dbs-border shadow-dbs'
+              : 'bg-white text-dbs-text rounded-tl-sm border border-dbs-border border-l-2 border-l-dbs-red shadow-dbs'
           }`}
         >
           {msg.content.split('\n').map((line, i, arr) => (
@@ -214,22 +214,22 @@ function LiveTicker({ prices }) {
 
 function DbsLogo() {
   return (
-    <div className="flex items-center gap-2.5">
-      {/* DBS Spark icon */}
-      <svg width="38" height="38" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-        {/* Pincushion spark shape: 4 rounded lobes at N/E/S/W, concave pinch at NE/SE/SW/NW */}
+    <div className="flex items-center gap-3">
+      {/* DBS Spark icon — accurate pincushion shape matching official DBS logo */}
+      <svg width="40" height="40" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+        {/* Pincushion: 8 smooth cubic bezier segments, outward lobes at N/E/S/W, concave pinch at diagonals */}
         <path
-          d="M50 5 C63 5,79 18,79 29 C79 38,95 38,95 50 C95 62,79 62,79 71 C79 82,63 95,50 95 C37 95,21 82,21 71 C21 62,5 62,5 50 C5 38,21 38,21 29 C21 18,37 5,50 5 Z"
-          fill="#EF3340"
+          d="M50,6 C62,6 80,20 80,32 C80,44 94,44 94,50 C94,56 80,56 80,68 C80,80 62,94 50,94 C38,94 20,80 20,68 C20,56 6,56 6,50 C6,44 20,44 20,32 C20,20 38,6 50,6 Z"
+          fill="#DA291C"
         />
-        {/* White tapered X — 4 arms pointing to diagonal corners */}
+        {/* White X — 4 tapered arms pointing to diagonal corners */}
         <path
-          d="M50 45 L77 18 L82 23 L55 50 L82 77 L77 82 L50 55 L23 82 L18 77 L45 50 L18 23 L23 18 Z"
+          d="M50,44 L78,16 L84,22 L56,50 L84,78 L78,84 L50,56 L22,84 L16,78 L44,50 L16,22 L22,16 Z"
           fill="white"
         />
       </svg>
       {/* DBS wordmark */}
-      <span style={{ fontFamily: 'Georgia, "Times New Roman", serif', fontSize: '22px', fontWeight: '900', color: '#0d0d0d', letterSpacing: '-0.5px', lineHeight: 1 }}>DBS</span>
+      <span style={{ fontFamily: 'Georgia, "Times New Roman", serif', fontSize: '26px', fontWeight: '900', color: '#0a0a0a', letterSpacing: '-1px', lineHeight: 1 }}>DBS</span>
     </div>
   )
 }
@@ -422,8 +422,11 @@ export default function App() {
   return (
     <div className="flex flex-col h-screen bg-dbs-bg overflow-hidden">
 
+      {/* ── Top accent bar ── */}
+      <div className="flex-shrink-0 h-[3px] bg-dbs-red" />
+
       {/* ── Header ── */}
-      <header className="flex-shrink-0 bg-white border-b border-dbs-border px-5 py-3 flex items-center justify-between shadow-dbs">
+      <header className="flex-shrink-0 bg-white border-b border-dbs-border px-5 py-3 flex items-center justify-between shadow-dbs-md">
         <div className="flex items-center gap-3">
           {/* Logo */}
           <DbsLogo />
@@ -569,41 +572,40 @@ export default function App() {
       <div className="flex-1 flex overflow-hidden">
 
         {/* ── Messages ── */}
-        <div className="flex-1 overflow-y-auto">
+        <div className="flex-1 overflow-y-auto dbs-dot-grid">
           {isEmpty ? (
 
             /* Landing */
-            <div className="max-w-3xl mx-auto px-4 py-10">
-              {/* Hero */}
-              <div className="flex items-start gap-6 mb-8">
-                <div className="flex-shrink-0">
-                  <div className="w-16 h-16 bg-dbs-red rounded flex items-center justify-center">
-                    <span className="text-white text-2xl font-bold">D</span>
-                  </div>
+            <div className="relative max-w-2xl mx-auto px-4 py-14">
+              {/* Radial gradient overlay */}
+              <div className="absolute inset-x-0 top-0 h-80 pointer-events-none" style={{ background: 'radial-gradient(ellipse at 50% 0%, rgba(218,41,28,0.06) 0%, transparent 65%)' }} />
+
+              {/* Hero — centered */}
+              <div className="relative text-center mb-10">
+                <div className="w-20 h-20 bg-dbs-red rounded-xl flex items-center justify-center mx-auto mb-5 shadow-dbs-md">
+                  <span className="text-white text-3xl font-bold tracking-tight">D</span>
                 </div>
-                <div>
-                  <h1 className="text-2xl font-semibold text-dbs-text mb-1">
-                    {currentUser.id === 'new'
-                      ? 'Welcome to DDEx AI Companion'
-                      : `Welcome back, ${currentUser.name.split(' ')[0]}`}
-                  </h1>
-                  <div className="w-8 h-0.5 bg-dbs-red mb-2" />
-                  <p className="text-sm text-dbs-muted leading-relaxed">
-                    {currentUser.id === 'new'
-                      ? 'Your intelligent guide to DBS Digital Exchange — Asia\'s first bank-backed digital asset ecosystem. Ask about products, get live prices, run technical analysis, or explore the full tokenised asset universe.'
-                      : currentUser.id === 'alex'
-                      ? 'Your family office holds BTC and ETH across multiple tranches. Get live prices, technical analysis, or explore structured product alternatives.'
-                      : currentUser.id === 'priya'
-                      ? 'Your USD 12M sgBENJI position is accruing daily yield in a tokenised money market fund. Ask about performance, collateral use, or yield optimisation.'
-                      : 'Your SGD 1M DBS Digital Bond 2026 position is generating semi-annual coupons. Ask about upcoming payments, credit analysis, or explore other fixed-income products.'
-                    }
-                  </p>
-                </div>
+                <h1 className="text-3xl font-bold text-dbs-text mb-2 tracking-tight">
+                  {currentUser.id === 'new'
+                    ? 'Welcome to DDEx AI Companion'
+                    : `Welcome back, ${currentUser.name.split(' ')[0]}`}
+                </h1>
+                <div className="w-12 h-0.5 bg-dbs-red mx-auto mb-3" />
+                <p className="text-sm text-dbs-muted leading-relaxed max-w-md mx-auto">
+                  {currentUser.id === 'new'
+                    ? 'Your intelligent guide to DBS Digital Exchange — Asia\'s first bank-backed digital asset ecosystem. Ask about products, get live prices, run technical analysis, or explore the full tokenised asset universe.'
+                    : currentUser.id === 'alex'
+                    ? 'Your family office holds BTC and ETH across multiple tranches. Get live prices, technical analysis, or explore structured product alternatives.'
+                    : currentUser.id === 'priya'
+                    ? 'Your USD 12M sgBENJI position is accruing daily yield in a tokenised money market fund. Ask about performance, collateral use, or yield optimisation.'
+                    : 'Your SGD 1M DBS Digital Bond 2026 position is generating semi-annual coupons. Ask about upcoming payments, credit analysis, or explore other fixed-income products.'
+                  }
+                </p>
               </div>
 
               {/* Suggested prompts */}
               <div className="space-y-2 mb-5">
-                <div className="flex items-center gap-2 mb-2">
+                <div className="flex items-center justify-center gap-2 mb-3">
                   <div className="text-[10px] text-dbs-faint uppercase tracking-wider">Suggested for you</div>
                   {currentUser.id !== 'new' && (
                     <div
@@ -619,10 +621,15 @@ export default function App() {
                     key={i}
                     onClick={() => handleSend(prompt)}
                     disabled={loading}
-                    className="w-full text-left px-4 py-3 bg-white hover:bg-dbs-red-light border border-dbs-border hover:border-dbs-red/30 rounded text-sm text-dbs-muted hover:text-dbs-text transition-all disabled:opacity-50 shadow-dbs"
+                    className="group w-full flex items-center justify-between gap-3 text-left px-4 py-3.5 bg-white hover:bg-dbs-red-light border border-dbs-border hover:border-dbs-red/40 rounded-lg text-sm text-dbs-muted hover:text-dbs-text transition-all disabled:opacity-50 shadow-dbs"
                   >
-                    <span className="text-dbs-red mr-2 font-semibold">→</span>
-                    {prompt}
+                    <div className="flex items-center gap-3">
+                      <div className="w-5 h-5 rounded bg-dbs-red/10 flex items-center justify-center flex-shrink-0 group-hover:bg-dbs-red/20 transition-colors">
+                        <span className="text-dbs-red text-[10px] font-bold">{i + 1}</span>
+                      </div>
+                      <span>{prompt}</span>
+                    </div>
+                    <span className="text-dbs-faint group-hover:text-dbs-red transition-colors flex-shrink-0 text-xs">→</span>
                   </button>
                 ))}
               </div>
@@ -645,19 +652,23 @@ export default function App() {
         {/* ── Portfolio Sidebar (permanent, right) ── */}
         {currentUser.transactions.length > 0 && (
           <div className="w-72 flex-shrink-0 border-l border-dbs-border bg-white overflow-y-auto">
-            <div className="p-4">
-              <div className="flex items-center justify-between mb-3">
-                <div className="flex items-center gap-2">
-                  <div className="w-1 h-4 rounded-full" style={{ backgroundColor: currentUser.color }} />
-                  <span className="text-xs font-semibold text-dbs-text uppercase tracking-wider">Your Portfolio</span>
-                </div>
-                <span
-                  className="text-[10px] px-2 py-0.5 rounded-full font-semibold"
-                  style={{ backgroundColor: currentUser.color + '22', color: currentUser.color }}
-                >
-                  {currentUser.transactions.length} transactions
-                </span>
+            {/* Gradient header */}
+            <div
+              className="px-4 py-3 border-b border-dbs-border flex items-center justify-between"
+              style={{ background: `linear-gradient(135deg, ${currentUser.color}20 0%, ${currentUser.color}08 100%)` }}
+            >
+              <div className="flex items-center gap-2">
+                <div className="w-1.5 h-4 rounded-full" style={{ backgroundColor: currentUser.color }} />
+                <span className="text-xs font-semibold text-dbs-text uppercase tracking-wider">Your Portfolio</span>
               </div>
+              <span
+                className="text-[10px] px-2 py-0.5 rounded-full font-semibold"
+                style={{ backgroundColor: currentUser.color + '22', color: currentUser.color }}
+              >
+                {currentUser.transactions.length} transactions
+              </span>
+            </div>
+            <div className="p-4">
               <div className="space-y-1">
                 {currentUser.transactions.slice().reverse().map((tx, i) => {
                   const typeStyle = {
@@ -699,7 +710,7 @@ export default function App() {
       {/* ── Input ── */}
       <div className="flex-shrink-0 bg-white border-t border-dbs-border px-4 py-4">
         <div className="max-w-3xl mx-auto">
-          <div className="flex items-end gap-3 bg-white border border-dbs-border rounded px-4 py-3 focus-within:border-dbs-border-md transition-colors shadow-dbs">
+          <div className="flex items-end gap-3 bg-white border border-dbs-border rounded-2xl px-5 py-3 focus-within:border-dbs-border-md transition-colors shadow-dbs">
             <textarea
               ref={inputRef}
               value={input}
