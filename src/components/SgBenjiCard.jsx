@@ -15,7 +15,7 @@ const CHAIN_DATA = [
 
 export default function SgBenjiCard() {
   const product = PRODUCTS.sgbenji
-  const [stats, setStats] = useState({
+  const [stats] = useState({
     aum: '$1.01B',
     aum30dChange: -2.53,
     holders: 1094,
@@ -28,37 +28,37 @@ export default function SgBenjiCard() {
   })
 
   return (
-    <div className="bg-[#111] border border-[#222] rounded-xl overflow-hidden w-full max-w-lg">
+    <div className="bg-white border border-dbs-border rounded shadow-dbs overflow-hidden w-full max-w-lg">
       {/* Header */}
-      <div className="p-4 border-b border-[#1e1e1e]">
+      <div className="p-4 border-b border-dbs-border">
         <div className="flex items-center justify-between mb-1">
           <div className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-lg bg-blue-500/10 flex items-center justify-center">
-              <span className="text-blue-400 text-xs font-bold">FT</span>
+            <div className="w-8 h-8 rounded bg-blue-50 border border-blue-200 flex items-center justify-center">
+              <span className="text-blue-600 text-xs font-bold">FT</span>
             </div>
             <div>
-              <div className="text-sm font-semibold text-white">Franklin Templeton sgBENJI</div>
-              <div className="text-xs text-gray-500">Tokenised Money Market Fund · XRP Ledger</div>
+              <div className="text-sm font-semibold text-dbs-text">Franklin Templeton sgBENJI</div>
+              <div className="text-xs text-dbs-muted">Tokenised Money Market Fund · XRP Ledger</div>
             </div>
           </div>
           <div className="text-right">
-            <div className="text-base font-mono font-bold text-green-400">{stats.yield}</div>
-            <div className="text-[10px] text-gray-500">7-day yield</div>
+            <div className="text-base font-mono font-bold text-green-600">{stats.yield}</div>
+            <div className="text-[10px] text-dbs-muted">7-day yield</div>
           </div>
         </div>
-        <div className="text-[10px] text-gray-600 mt-1">
+        <div className="text-[10px] text-dbs-muted mt-1">
           DBS × Franklin Templeton × Ripple · Listed on DDEx Sept 2025
         </div>
       </div>
 
       {/* AUM Chart */}
       <div className="px-4 pt-3 pb-1">
-        <div className="text-[10px] text-gray-600 uppercase tracking-wide mb-2">NAV Performance (30D)</div>
+        <div className="text-[10px] text-dbs-muted uppercase tracking-wide font-semibold mb-2">NAV Performance (30D)</div>
         <PriceChart product={product} height={100} showRangeSelector={false} />
       </div>
 
       {/* Key stats */}
-      <div className="grid grid-cols-2 gap-px bg-[#1a1a1a] border-t border-[#1e1e1e]">
+      <div className="grid grid-cols-2 gap-px bg-dbs-border border-t border-dbs-border">
         <StatBox
           label="Total AUM"
           value={stats.aum}
@@ -85,20 +85,20 @@ export default function SgBenjiCard() {
       </div>
 
       {/* Chain breakdown */}
-      <div className="p-4 border-t border-[#1e1e1e]">
-        <div className="text-[10px] text-gray-600 uppercase tracking-wide mb-3">AUM by Chain</div>
+      <div className="p-4 border-t border-dbs-border">
+        <div className="text-[10px] text-dbs-muted uppercase tracking-wide font-semibold mb-3">AUM by Chain</div>
         <div className="space-y-2">
           {CHAIN_DATA.slice(0, 4).map(chain => (
             <div key={chain.name} className="flex items-center gap-2">
-              <div className="text-xs text-gray-400 w-20 flex-shrink-0">{chain.name}</div>
-              <div className="flex-1 bg-[#1a1a1a] rounded-full h-1.5 overflow-hidden">
+              <div className="text-xs text-dbs-text w-20 flex-shrink-0 font-medium">{chain.name}</div>
+              <div className="flex-1 bg-dbs-bg border border-dbs-border rounded-full h-1.5 overflow-hidden">
                 <div
-                  className="h-full rounded-full bg-blue-500"
+                  className="h-full rounded-full bg-dbs-red"
                   style={{ width: `${chain.share}%` }}
                 />
               </div>
-              <div className="text-xs font-mono text-gray-400 w-10 text-right">{chain.share}%</div>
-              <div className={`text-[10px] w-12 text-right ${chain.change >= 0 ? 'text-green-500' : 'text-red-500'}`}>
+              <div className="text-xs font-mono font-semibold text-dbs-text w-10 text-right">{chain.share}%</div>
+              <div className={`text-[10px] w-12 text-right font-medium ${chain.change >= 0 ? 'text-green-600' : 'text-dbs-red'}`}>
                 {chain.change >= 0 ? '+' : ''}{chain.change}%
               </div>
             </div>
@@ -108,14 +108,14 @@ export default function SgBenjiCard() {
 
       {/* Details */}
       <div className="px-4 pb-4 space-y-2">
-        <div className="bg-[#0d0d0d] rounded-lg p-3 space-y-1.5">
+        <div className="bg-dbs-bg border border-dbs-border rounded p-3 space-y-1.5">
           <Row label="Underlying Fund" value="Franklin OnChain U.S. Govt Money Fund (FOBXX)" />
           <Row label="Min Investment" value="USD 1,000" />
           <Row label="Settlement" value="Minutes (on-chain)" />
           <Row label="Collateral Use" value="Eligible for DBS repo transactions" />
           <Row label="Settlement Asset" value="RLUSD (swap pair on DDEx)" />
         </div>
-        <div className="text-[10px] text-gray-600 text-right">
+        <div className="text-[10px] text-dbs-faint text-right">
           Data via rwa.xyz · Updated {stats.lastUpdated}
         </div>
       </div>
@@ -126,15 +126,15 @@ export default function SgBenjiCard() {
 function StatBox({ label, value, change, sub }) {
   const isUp = change >= 0
   return (
-    <div className="bg-[#111] p-3">
-      <div className="text-[10px] text-gray-600 uppercase tracking-wide mb-1">{label}</div>
-      <div className="text-base font-mono font-semibold text-white">{value}</div>
+    <div className="bg-white p-3">
+      <div className="text-[10px] text-dbs-muted uppercase tracking-wide mb-1">{label}</div>
+      <div className="text-base font-mono font-semibold text-dbs-text">{value}</div>
       {change !== undefined ? (
-        <div className={`text-[10px] ${isUp ? 'text-green-500' : 'text-red-500'}`}>
+        <div className={`text-[10px] font-medium ${isUp ? 'text-green-600' : 'text-dbs-red'}`}>
           {isUp ? '▲' : '▼'} {Math.abs(change)}% {sub}
         </div>
       ) : (
-        <div className="text-[10px] text-gray-600">{sub}</div>
+        <div className="text-[10px] text-dbs-muted">{sub}</div>
       )}
     </div>
   )
@@ -143,8 +143,8 @@ function StatBox({ label, value, change, sub }) {
 function Row({ label, value }) {
   return (
     <div className="flex justify-between items-start gap-4">
-      <span className="text-[10px] text-gray-600 flex-shrink-0">{label}</span>
-      <span className="text-[10px] text-gray-400 text-right">{value}</span>
+      <span className="text-[10px] text-dbs-muted flex-shrink-0">{label}</span>
+      <span className="text-[10px] text-dbs-text font-medium text-right">{value}</span>
     </div>
   )
 }

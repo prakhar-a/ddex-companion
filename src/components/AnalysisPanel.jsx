@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid, BarChart, Bar } from 'recharts'
+import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid } from 'recharts'
 import { fetchPriceHistory, fetchCoinDetails, fetchFearGreed } from '../hooks/useCoinGecko'
 import { sendMessage } from '../utils/openrouter'
 import { PRODUCTS } from '../data/products'
@@ -50,12 +50,12 @@ function computeMACD(prices) {
 }
 
 const FearGreedMeter = ({ value, label }) => {
-  const color = value < 25 ? '#ef4444' : value < 45 ? '#f97316' : value < 55 ? '#f59e0b' : value < 75 ? '#86efac' : '#22c55e'
+  const color = value < 25 ? '#DA291C' : value < 45 ? '#f97316' : value < 55 ? '#f59e0b' : value < 75 ? '#16a34a' : '#15803d'
   return (
     <div className="flex flex-col items-center">
       <div className="relative w-20 h-20">
         <svg viewBox="0 0 80 80" className="w-full h-full -rotate-90">
-          <circle cx="40" cy="40" r="30" fill="none" stroke="#1e1e1e" strokeWidth="8" />
+          <circle cx="40" cy="40" r="30" fill="none" stroke="#DCDCDC" strokeWidth="8" />
           <circle
             cx="40" cy="40" r="30" fill="none"
             stroke={color} strokeWidth="8"
@@ -67,8 +67,8 @@ const FearGreedMeter = ({ value, label }) => {
           <span className="text-lg font-bold font-mono" style={{ color }}>{value}</span>
         </div>
       </div>
-      <span className="text-xs text-gray-400 mt-1">{label}</span>
-      <span className="text-[10px] text-gray-600">Fear & Greed</span>
+      <span className="text-xs text-dbs-text font-medium mt-1">{label}</span>
+      <span className="text-[10px] text-dbs-muted">Fear & Greed</span>
     </div>
   )
 }
@@ -115,7 +115,7 @@ export default function AnalysisPanel({ coin, priceData }) {
     const current = prices[prices.length - 1]
 
     try {
-      const prompt = `Provide a concise professional technical and fundamental analysis of ${product.name} (${product.symbol}) for a DBS Private Bank client. 
+      const prompt = `Provide a concise professional technical and fundamental analysis of ${product.name} (${product.symbol}) for a DBS Private Bank client.
 
 Current data:
 - Price: $${current?.toLocaleString()}
@@ -148,19 +148,19 @@ Write 3 short paragraphs: (1) Technical outlook, (2) Fundamental context, (3) Ke
   const displayData = history.length > 60 ? history.filter((_, i) => i % Math.ceil(history.length / 60) === 0) : history
 
   return (
-    <div className="bg-[#111] border border-[#222] rounded-xl overflow-hidden w-full max-w-lg">
+    <div className="bg-white border border-dbs-border rounded shadow-dbs overflow-hidden w-full max-w-lg">
       {/* Header */}
-      <div className="p-4 border-b border-[#1e1e1e]">
+      <div className="p-4 border-b border-dbs-border">
         <div className="flex items-center justify-between">
           <div>
-            <div className="text-sm font-semibold text-white">{product.name} Analysis</div>
-            <div className="text-xs text-gray-500">Technical & Fundamental · Live Data</div>
+            <div className="text-sm font-semibold text-dbs-text">{product.name} Analysis</div>
+            <div className="text-xs text-dbs-muted">Technical & Fundamental · Live Data</div>
           </div>
           <div className="text-right">
-            <div className="text-base font-mono font-bold text-white">
+            <div className="text-base font-mono font-bold text-dbs-text">
               ${price?.toLocaleString('en-US', { minimumFractionDigits: 2 })}
             </div>
-            <div className={`text-xs ${isUp ? 'text-green-400' : 'text-red-400'}`}>
+            <div className={`text-xs font-medium ${isUp ? 'text-green-600' : 'text-dbs-red'}`}>
               {isUp ? '+' : ''}{change24h?.toFixed(2)}% 24h
             </div>
           </div>
@@ -168,15 +168,15 @@ Write 3 short paragraphs: (1) Technical outlook, (2) Fundamental context, (3) Ke
       </div>
 
       {/* Price Chart */}
-      <div className="p-4 border-b border-[#1e1e1e]">
+      <div className="p-4 border-b border-dbs-border">
         <div className="flex items-center justify-between mb-3">
-          <span className="text-[10px] text-gray-600 uppercase tracking-wide">Price Chart</span>
+          <span className="text-[10px] text-dbs-muted uppercase tracking-wide font-semibold">Price Chart</span>
           <div className="flex gap-1">
             {RANGES.map(r => (
               <button
                 key={r.label}
                 onClick={() => setRange(r.days)}
-                className={`px-2 py-0.5 text-xs rounded transition-colors ${range === r.days ? 'bg-[#DA291C] text-white' : 'text-gray-500 hover:text-gray-300'}`}
+                className={`px-2 py-0.5 text-xs rounded transition-colors font-medium ${range === r.days ? 'bg-dbs-red text-white' : 'text-dbs-muted hover:text-dbs-text'}`}
               >
                 {r.label}
               </button>
@@ -185,66 +185,66 @@ Write 3 short paragraphs: (1) Technical outlook, (2) Fundamental context, (3) Ke
         </div>
         {loading ? (
           <div className="h-32 flex items-center justify-center">
-            <div className="w-4 h-4 border border-[#DA291C] border-t-transparent rounded-full animate-spin" />
+            <div className="w-4 h-4 border-2 border-dbs-red border-t-transparent rounded-full animate-spin" />
           </div>
         ) : (
           <ResponsiveContainer width="100%" height={140}>
             <LineChart data={displayData} margin={{ top: 2, right: 4, left: 0, bottom: 0 }}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#1a1a1a" vertical={false} />
-              <XAxis dataKey="date" tick={{ fontSize: 9, fill: '#444' }} tickLine={false} axisLine={false} interval="preserveStartEnd" />
+              <CartesianGrid strokeDasharray="3 3" stroke="#ECECEC" vertical={false} />
+              <XAxis dataKey="date" tick={{ fontSize: 9, fill: '#909090' }} tickLine={false} axisLine={false} interval="preserveStartEnd" />
               <YAxis
-                tick={{ fontSize: 9, fill: '#444' }} tickLine={false} axisLine={false} width={50}
+                tick={{ fontSize: 9, fill: '#909090' }} tickLine={false} axisLine={false} width={50}
                 tickFormatter={v => `$${v >= 1000 ? (v / 1000).toFixed(0) + 'k' : v.toFixed(0)}`}
                 domain={['auto', 'auto']}
               />
               <Tooltip
                 content={({ active, payload, label }) => active && payload?.length ? (
-                  <div className="bg-[#1a1a1a] border border-[#2a2a2a] rounded px-2 py-1.5 text-xs">
-                    <div className="text-gray-400">{label}</div>
-                    <div className="text-white font-mono">${payload[0].value.toLocaleString()}</div>
+                  <div className="bg-white border border-dbs-border rounded px-2 py-1.5 text-xs shadow-dbs">
+                    <div className="text-dbs-muted">{label}</div>
+                    <div className="text-dbs-text font-mono font-semibold">${payload[0].value.toLocaleString()}</div>
                   </div>
                 ) : null}
               />
-              <Line type="monotone" dataKey="price" stroke={isUp ? '#22c55e' : '#ef4444'} strokeWidth={1.5} dot={false} activeDot={{ r: 3 }} />
+              <Line type="monotone" dataKey="price" stroke={isUp ? '#16a34a' : '#DA291C'} strokeWidth={1.5} dot={false} activeDot={{ r: 3 }} />
             </LineChart>
           </ResponsiveContainer>
         )}
       </div>
 
       {/* Technical Indicators */}
-      <div className="p-4 border-b border-[#1e1e1e]">
-        <div className="text-[10px] text-gray-600 uppercase tracking-wide mb-3">Technical Indicators</div>
+      <div className="p-4 border-b border-dbs-border">
+        <div className="text-[10px] text-dbs-muted uppercase tracking-wide font-semibold mb-3">Technical Indicators</div>
         <div className="grid grid-cols-2 gap-3">
           <Indicator
             label="RSI (14)"
             value={rsi ? rsi.toFixed(1) : '—'}
             signal={rsi ? (rsi > 70 ? 'Overbought' : rsi < 30 ? 'Oversold' : 'Neutral') : '—'}
-            signalColor={rsi ? (rsi > 70 ? '#ef4444' : rsi < 30 ? '#22c55e' : '#f59e0b') : '#666'}
+            signalColor={rsi ? (rsi > 70 ? '#DA291C' : rsi < 30 ? '#16a34a' : '#f59e0b') : '#909090'}
           />
           <Indicator
             label="MACD"
             value={macd ? macd.toFixed(2) : '—'}
             signal={macd ? (macd > 0 ? 'Bullish' : 'Bearish') : '—'}
-            signalColor={macd ? (macd > 0 ? '#22c55e' : '#ef4444') : '#666'}
+            signalColor={macd ? (macd > 0 ? '#16a34a' : '#DA291C') : '#909090'}
           />
           <Indicator
             label="vs MA50"
             value={ma50 ? `$${ma50.toLocaleString('en-US', { maximumFractionDigits: 0 })}` : '—'}
             signal={isAboveMA50 ? 'Above' : 'Below'}
-            signalColor={isAboveMA50 ? '#22c55e' : '#ef4444'}
+            signalColor={isAboveMA50 ? '#16a34a' : '#DA291C'}
           />
           <Indicator
             label="vs MA200"
             value={ma200 ? `$${ma200.toLocaleString('en-US', { maximumFractionDigits: 0 })}` : '—'}
             signal={current > ma200 ? 'Above' : 'Below'}
-            signalColor={current > ma200 ? '#22c55e' : '#ef4444'}
+            signalColor={current > ma200 ? '#16a34a' : '#DA291C'}
           />
         </div>
       </div>
 
       {/* Fundamentals + Fear & Greed */}
-      <div className="p-4 border-b border-[#1e1e1e]">
-        <div className="text-[10px] text-gray-600 uppercase tracking-wide mb-3">Fundamentals</div>
+      <div className="p-4 border-b border-dbs-border">
+        <div className="text-[10px] text-dbs-muted uppercase tracking-wide font-semibold mb-3">Fundamentals</div>
         <div className="flex items-center gap-4">
           {fearGreed && <FearGreedMeter value={fearGreed.value} label={fearGreed.label} />}
           <div className="flex-1 space-y-2">
@@ -269,17 +269,17 @@ Write 3 short paragraphs: (1) Technical outlook, (2) Fundamental context, (3) Ke
 
       {/* AI Analysis */}
       <div className="p-4">
-        <div className="text-[10px] text-gray-600 uppercase tracking-wide mb-2">AI Analysis</div>
+        <div className="text-[10px] text-dbs-muted uppercase tracking-wide font-semibold mb-2">AI Analysis</div>
         {loadingAI ? (
           <div className="space-y-2">
-            <div className="h-3 bg-[#1e1e1e] rounded animate-pulse" />
-            <div className="h-3 bg-[#1e1e1e] rounded animate-pulse w-4/5" />
-            <div className="h-3 bg-[#1e1e1e] rounded animate-pulse w-3/5" />
+            <div className="h-3 bg-dbs-bg rounded animate-pulse" />
+            <div className="h-3 bg-dbs-bg rounded animate-pulse w-4/5" />
+            <div className="h-3 bg-dbs-bg rounded animate-pulse w-3/5" />
           </div>
         ) : (
-          <p className="text-xs text-gray-400 leading-relaxed">{aiAnalysis}</p>
+          <p className="text-xs text-dbs-text leading-relaxed">{aiAnalysis}</p>
         )}
-        <div className="mt-3 p-2 bg-[#0d0d0d] rounded text-[10px] text-gray-600 leading-relaxed">
+        <div className="mt-3 p-2.5 bg-dbs-bg border border-dbs-border rounded text-[10px] text-dbs-muted leading-relaxed">
           ⚠ For informational purposes only. Not financial advice. Digital assets are highly volatile. Capital at risk. Speak to your DBS Relationship Manager before investing.
         </div>
       </div>
@@ -289,10 +289,10 @@ Write 3 short paragraphs: (1) Technical outlook, (2) Fundamental context, (3) Ke
 
 function Indicator({ label, value, signal, signalColor }) {
   return (
-    <div className="bg-[#0d0d0d] rounded-lg p-2.5">
-      <div className="text-[10px] text-gray-600 mb-1">{label}</div>
-      <div className="text-sm font-mono font-medium text-white">{value}</div>
-      <div className="text-[10px] font-medium mt-0.5" style={{ color: signalColor }}>{signal}</div>
+    <div className="bg-dbs-bg border border-dbs-border rounded p-2.5">
+      <div className="text-[10px] text-dbs-muted mb-1">{label}</div>
+      <div className="text-sm font-mono font-semibold text-dbs-text">{value}</div>
+      <div className="text-[10px] font-semibold mt-0.5" style={{ color: signalColor }}>{signal}</div>
     </div>
   )
 }
@@ -300,8 +300,8 @@ function Indicator({ label, value, signal, signalColor }) {
 function FundRow({ label, value }) {
   return (
     <div className="flex justify-between">
-      <span className="text-[10px] text-gray-600">{label}</span>
-      <span className="text-[10px] font-mono text-gray-300">{value}</span>
+      <span className="text-[10px] text-dbs-muted">{label}</span>
+      <span className="text-[10px] font-mono font-semibold text-dbs-text">{value}</span>
     </div>
   )
 }

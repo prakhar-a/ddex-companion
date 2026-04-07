@@ -66,7 +66,7 @@ function FormattedText({ text }) {
     <span>
       {parts.map((part, i) =>
         part.startsWith('**') && part.endsWith('**')
-          ? <strong key={i} className="text-white font-semibold">{part.slice(2, -2)}</strong>
+          ? <strong key={i} className="text-dbs-red font-semibold">{part.slice(2, -2)}</strong>
           : <span key={i}>{part}</span>
       )}
     </span>
@@ -76,18 +76,18 @@ function FormattedText({ text }) {
 function MessageBubble({ msg, priceData }) {
   const isUser = msg.role === 'user'
   return (
-    <div className={`msg-enter flex ${isUser ? 'justify-end' : 'justify-start'} mb-5`}>
+    <div className={`msg-enter flex ${isUser ? 'justify-end' : 'justify-start'} mb-4`}>
       {!isUser && (
-        <div className="w-7 h-7 rounded-lg bg-[#DA291C] flex items-center justify-center flex-shrink-0 mr-2.5 mt-0.5">
+        <div className="w-7 h-7 rounded flex items-center justify-center flex-shrink-0 mr-2.5 mt-0.5 bg-dbs-red">
           <span className="text-white text-[10px] font-bold">AI</span>
         </div>
       )}
       <div className={`${isUser ? 'max-w-[75%]' : 'max-w-full flex-1'}`}>
         <div
-          className={`rounded-2xl px-4 py-3 text-sm leading-relaxed ${
+          className={`rounded px-4 py-3 text-sm leading-relaxed ${
             isUser
-              ? 'bg-[#DA291C] text-white rounded-tr-sm ml-auto w-fit'
-              : 'bg-[#161616] text-gray-300 rounded-tl-sm border border-[#222]'
+              ? 'bg-dbs-red text-white rounded-tr-sm ml-auto w-fit'
+              : 'bg-white text-dbs-text rounded-tl-sm border border-dbs-border shadow-dbs'
           }`}
         >
           {msg.content.split('\n').map((line, i, arr) => (
@@ -106,15 +106,15 @@ function MessageBubble({ msg, priceData }) {
 
 function TypingIndicator() {
   return (
-    <div className="msg-enter flex justify-start mb-5">
-      <div className="w-7 h-7 rounded-lg bg-[#DA291C] flex items-center justify-center flex-shrink-0 mr-2.5">
+    <div className="msg-enter flex justify-start mb-4">
+      <div className="w-7 h-7 rounded flex items-center justify-center flex-shrink-0 mr-2.5 bg-dbs-red">
         <span className="text-white text-[10px] font-bold">AI</span>
       </div>
-      <div className="bg-[#161616] border border-[#222] rounded-2xl rounded-tl-sm px-4 py-3.5">
+      <div className="bg-white border border-dbs-border rounded rounded-tl-sm px-4 py-3.5 shadow-dbs">
         <div className="flex gap-1 items-center h-4">
-          <div className="dot w-1.5 h-1.5 rounded-full bg-gray-500" />
-          <div className="dot w-1.5 h-1.5 rounded-full bg-gray-500" />
-          <div className="dot w-1.5 h-1.5 rounded-full bg-gray-500" />
+          <div className="dot w-1.5 h-1.5 rounded-full bg-dbs-muted" />
+          <div className="dot w-1.5 h-1.5 rounded-full bg-dbs-muted" />
+          <div className="dot w-1.5 h-1.5 rounded-full bg-dbs-muted" />
         </div>
       </div>
     </div>
@@ -135,19 +135,28 @@ function LiveTicker({ prices }) {
         const isUp = p.usd_24h_change >= 0
         return (
           <div key={id} className="flex items-center gap-1.5">
-            <span className="text-[10px] text-gray-600 font-mono">{sym}</span>
-            <span className="text-xs font-mono text-white">
+            <span className="text-[10px] text-dbs-muted font-mono uppercase tracking-wide">{sym}</span>
+            <span className="text-xs font-mono text-dbs-text font-semibold">
               ${p.usd >= 1
                 ? p.usd.toLocaleString('en-US', { maximumFractionDigits: p.usd < 10 ? 4 : 0 })
                 : p.usd.toFixed(4)}
             </span>
-            <span className={`text-[10px] font-mono ${isUp ? 'text-green-400' : 'text-red-400'}`}>
+            <span className={`text-[10px] font-mono font-medium ${isUp ? 'text-green-600' : 'text-dbs-red'}`}>
               {isUp ? '+' : ''}{p.usd_24h_change.toFixed(2)}%
             </span>
           </div>
         )
       })}
     </div>
+  )
+}
+
+function DbsLogo() {
+  return (
+    <svg width="56" height="24" viewBox="0 0 56 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-label="DBS">
+      <rect width="56" height="24" rx="4" fill="#DA291C"/>
+      <text x="50%" y="50%" dominantBaseline="central" textAnchor="middle" fill="white" fontFamily="Arial, sans-serif" fontSize="11" fontWeight="700" letterSpacing="1">dbs</text>
+    </svg>
   )
 }
 
@@ -188,7 +197,7 @@ export default function App() {
       console.error(e)
       setMessages(prev => [...prev, {
         role: 'assistant',
-        content: 'Sorry, I encountered an error connecting to the AI. Please try again.',
+        content: `Error: ${e.message}`,
         directives: [],
       }])
     } finally {
@@ -213,33 +222,33 @@ export default function App() {
   const isEmpty = messages.length === 0
 
   return (
-    <div className="flex flex-col h-screen bg-[#0a0a0a] overflow-hidden">
+    <div className="flex flex-col h-screen bg-dbs-bg overflow-hidden">
 
       {/* ── Header ── */}
-      <header className="flex-shrink-0 border-b border-[#1a1a1a] px-5 py-3 flex items-center justify-between">
+      <header className="flex-shrink-0 bg-white border-b border-dbs-border px-5 py-3 flex items-center justify-between shadow-dbs">
         <div className="flex items-center gap-3">
           {/* Logo */}
           <div className="flex items-center gap-2.5">
-            <div className="w-8 h-8 bg-[#DA291C] rounded-xl flex items-center justify-center">
+            <div className="w-8 h-8 bg-dbs-red rounded flex items-center justify-center">
               <span className="text-white text-[11px] font-bold tracking-tight">DBS</span>
             </div>
             <div>
               <div className="flex items-center gap-1.5">
-                <span className="text-sm font-semibold text-white">DDEx</span>
-                <span className="text-[10px] px-1.5 py-0.5 bg-[#DA291C]/10 text-[#DA291C] rounded font-mono border border-[#DA291C]/20">
+                <span className="text-sm font-semibold text-dbs-text">DDEx</span>
+                <span className="text-[10px] px-1.5 py-0.5 bg-dbs-red-light text-dbs-red rounded font-mono border border-dbs-red/20 font-semibold">
                   AI
                 </span>
               </div>
-              <div className="text-[10px] text-gray-600 -mt-0.5">Digital Exchange Companion</div>
+              <div className="text-[10px] text-dbs-muted -mt-0.5">Digital Exchange Companion</div>
             </div>
           </div>
 
-          <div className="w-px h-5 bg-[#222]" />
+          <div className="w-px h-5 bg-dbs-border" />
 
           {/* Live indicator */}
           <div className="flex items-center gap-1.5">
             <div className={`w-1.5 h-1.5 rounded-full ${pricesLoading ? 'bg-yellow-500' : 'bg-green-500 live-dot'}`} />
-            <span className="text-[10px] text-gray-600">
+            <span className="text-[10px] text-dbs-muted">
               {pricesLoading ? 'Connecting…' : 'Live'}
             </span>
           </div>
@@ -250,12 +259,14 @@ export default function App() {
           {messages.length > 0 && (
             <button
               onClick={reset}
-              className="flex items-center gap-1.5 text-[11px] text-gray-600 hover:text-gray-300 transition-colors"
+              className="flex items-center gap-1.5 text-[11px] text-dbs-muted hover:text-dbs-text transition-colors"
             >
               <RotateCcw size={11} />
               <span>New chat</span>
             </button>
           )}
+          <div className="w-px h-5 bg-dbs-border" />
+          <DbsLogo />
         </div>
       </header>
 
@@ -264,43 +275,101 @@ export default function App() {
         {isEmpty ? (
 
           /* Landing */
-          <div className="max-w-lg mx-auto flex flex-col items-center justify-center h-full px-4 py-12">
-            <div className="text-center mb-8">
-              <div className="w-16 h-16 bg-[#DA291C] rounded-3xl flex items-center justify-center mx-auto mb-5 shadow-lg shadow-[#DA291C]/20">
-                <span className="text-white text-2xl font-bold">D</span>
+          <div className="max-w-3xl mx-auto px-4 py-10">
+            {/* Hero */}
+            <div className="flex items-start gap-6 mb-8">
+              <div className="flex-shrink-0">
+                <div className="w-16 h-16 bg-dbs-red rounded flex items-center justify-center">
+                  <span className="text-white text-2xl font-bold">D</span>
+                </div>
               </div>
-              <h1 className="text-2xl font-semibold text-white mb-2 gradient-text">
-                DDEx AI Companion
-              </h1>
-              <p className="text-sm text-gray-500 leading-relaxed max-w-sm mx-auto">
-                Your intelligent guide to DBS Digital Exchange. Ask about products, get live prices, run technical analysis, or explore the full tokenised asset universe.
+              <div>
+                <h1 className="text-2xl font-semibold text-dbs-text mb-1">DDEx AI Companion</h1>
+                <div className="w-8 h-0.5 bg-dbs-red mb-2" />
+                <p className="text-sm text-dbs-muted leading-relaxed">
+                  Your intelligent guide to DBS Digital Exchange — Asia's first bank-backed digital asset ecosystem. Ask about products, get live prices, run technical analysis, or explore the full tokenised asset universe.
+                </p>
+              </div>
+            </div>
+
+            {/* About DDEx */}
+            <div className="bg-white border border-dbs-border rounded shadow-dbs p-5 mb-4">
+              <div className="flex items-center gap-2 mb-3">
+                <div className="w-1 h-4 bg-dbs-red rounded-full" />
+                <span className="text-xs font-semibold text-dbs-text uppercase tracking-wider">About DBS Digital Exchange</span>
+              </div>
+              <p className="text-sm text-dbs-muted leading-relaxed mb-4">
+                DBS Digital Exchange (DDEx) is an institutional-grade platform to <strong className="text-dbs-text">tokenise, trade and custody digital assets</strong>. Built on the trust and infrastructure of DBS Bank, DDEx enables accredited and institutional investors to access fully regulated digital asset services — from cryptocurrency trading to security token offerings.
               </p>
+              <div className="grid grid-cols-3 gap-3">
+                {[
+                  { stat: '23/7', label: 'Crypto Trading' },
+                  { stat: '8', label: 'Cryptocurrencies' },
+                  { stat: '2', label: 'Fiat Currencies' },
+                ].map(({ stat, label }) => (
+                  <div key={label} className="bg-dbs-red-light border border-dbs-red/20 rounded p-3 text-center">
+                    <div className="text-lg font-bold text-dbs-red">{stat}</div>
+                    <div className="text-[10px] text-dbs-muted mt-0.5">{label}</div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Services */}
+            <div className="grid grid-cols-3 gap-3 mb-4">
+              {[
+                { icon: '⚡', title: 'Crypto Trading', desc: 'BTC, ETH, BCH, DOT, ADA, XRP, USDC, RLUSD — with SGD & USD pairs' },
+                { icon: '📋', title: 'Request for Quote', desc: 'Execute large block trades with minimal price slippage via RFQ' },
+                { icon: '🔐', title: 'Security Tokens', desc: 'Tokenised traditional securities with blockchain-based settlement' },
+              ].map(({ icon, title, desc }) => (
+                <div key={title} className="bg-white border border-dbs-border rounded shadow-dbs p-4">
+                  <div className="text-xl mb-2">{icon}</div>
+                  <div className="text-xs font-semibold text-dbs-text mb-1">{title}</div>
+                  <div className="text-[11px] text-dbs-muted leading-relaxed">{desc}</div>
+                </div>
+              ))}
+            </div>
+
+            {/* Eligibility */}
+            <div className="bg-white border border-dbs-border rounded shadow-dbs p-4 mb-4">
+              <div className="flex items-center gap-2 mb-2">
+                <div className="w-1 h-4 bg-dbs-red/50 rounded-full" />
+                <span className="text-xs font-semibold text-dbs-muted uppercase tracking-wider">Eligibility</span>
+              </div>
+              <div className="flex flex-wrap gap-2">
+                {['Financial Institutions', 'Corporate Accredited Investors', 'Family Offices', 'Professional Market Makers', 'DBS Private Bank Clients'].map(label => (
+                  <span key={label} className="text-[11px] px-2.5 py-1 bg-dbs-red-light border border-dbs-red/20 rounded text-dbs-muted">
+                    {label}
+                  </span>
+                ))}
+              </div>
             </div>
 
             {/* Suggested prompts */}
-            <div className="w-full space-y-2">
+            <div className="space-y-2 mb-5">
+              <div className="text-[10px] text-dbs-faint uppercase tracking-wider mb-2">Suggested questions</div>
               {SUGGESTED_PROMPTS.map((prompt, i) => (
                 <button
                   key={i}
                   onClick={() => handleSend(prompt)}
                   disabled={loading}
-                  className="w-full text-left px-4 py-3 bg-[#111] hover:bg-[#161616] border border-[#1e1e1e] hover:border-[#2a2a2a] rounded-xl text-sm text-gray-500 hover:text-gray-200 transition-all disabled:opacity-50"
+                  className="w-full text-left px-4 py-3 bg-white hover:bg-dbs-red-light border border-dbs-border hover:border-dbs-red/30 rounded text-sm text-dbs-muted hover:text-dbs-text transition-all disabled:opacity-50 shadow-dbs"
                 >
-                  <span className="text-[#DA291C] mr-2">→</span>
+                  <span className="text-dbs-red mr-2 font-semibold">→</span>
                   {prompt}
                 </button>
               ))}
             </div>
 
-            <div className="mt-8 text-[10px] text-gray-700 text-center max-w-xs leading-relaxed">
-              For accredited and institutional investors only · Not financial advice · Capital at risk · MAS-regulated
+            <div className="text-[10px] text-dbs-faint text-center leading-relaxed">
+              For accredited and institutional investors only · Not financial advice · Capital at risk · MAS-regulated · Not available to U.S. persons
             </div>
           </div>
 
         ) : (
 
           /* Chat messages */
-          <div className="max-w-lg mx-auto px-4 py-6">
+          <div className="max-w-3xl mx-auto px-4 py-6">
             {messages.map((msg, i) => (
               <MessageBubble key={i} msg={msg} priceData={prices} />
             ))}
@@ -312,37 +381,36 @@ export default function App() {
       </div>
 
       {/* ── Input ── */}
-      <div className="flex-shrink-0 border-t border-[#1a1a1a] px-4 py-4">
-        <div className="max-w-lg mx-auto">
-          <div className="flex items-end gap-3 bg-[#111] border border-[#222] rounded-2xl px-4 py-3 focus-within:border-[#333] transition-colors">
+      <div className="flex-shrink-0 bg-white border-t border-dbs-border px-4 py-4">
+        <div className="max-w-3xl mx-auto">
+          <div className="flex items-end gap-3 bg-white border border-dbs-border rounded px-4 py-3 focus-within:border-dbs-border-md transition-colors shadow-dbs">
             <textarea
               ref={inputRef}
               value={input}
               onChange={e => {
                 setInput(e.target.value)
-                // Auto-resize
                 e.target.style.height = 'auto'
                 e.target.style.height = Math.min(e.target.scrollHeight, 120) + 'px'
               }}
               onKeyDown={handleKeyDown}
               placeholder="Ask about products, prices, analysis…"
               rows={1}
-              className="flex-1 bg-transparent text-sm text-white placeholder-gray-700 resize-none outline-none leading-relaxed"
+              className="flex-1 bg-transparent text-sm text-dbs-text placeholder-dbs-faint resize-none outline-none leading-relaxed"
               style={{ scrollbarWidth: 'none', minHeight: '22px' }}
               autoFocus
             />
             <button
               onClick={() => handleSend()}
               disabled={!input.trim() || loading}
-              className="flex-shrink-0 w-8 h-8 bg-[#DA291C] hover:bg-[#c02218] disabled:bg-[#222] disabled:text-gray-700 text-white rounded-xl flex items-center justify-center transition-colors disabled:cursor-not-allowed"
+              className="flex-shrink-0 w-8 h-8 bg-dbs-red hover:bg-dbs-red-dark disabled:bg-dbs-border disabled:text-dbs-muted text-white rounded flex items-center justify-center transition-colors disabled:cursor-not-allowed"
             >
               {loading
-                ? <div className="w-3 h-3 border border-gray-600 border-t-transparent rounded-full animate-spin" />
+                ? <div className="w-3 h-3 border border-dbs-muted border-t-transparent rounded-full animate-spin" />
                 : <Send size={13} />
               }
             </button>
           </div>
-          <p className="text-[10px] text-gray-800 text-center mt-2">
+          <p className="text-[10px] text-dbs-faint text-center mt-2">
             DDEx · Accredited & Institutional Investors Only · Not financial advice
           </p>
         </div>
