@@ -646,18 +646,43 @@ export default function App() {
         {currentUser.transactions.length > 0 && (
           <div className="w-72 flex-shrink-0 border-l border-dbs-border bg-white overflow-y-auto">
             <div className="p-4">
-              <div className="flex items-center justify-between mb-3">
-                <div className="flex items-center gap-2">
-                  <div className="w-1 h-4 rounded-full" style={{ backgroundColor: currentUser.color }} />
-                  <span className="text-xs font-semibold text-dbs-text uppercase tracking-wider">Your Portfolio</span>
-                </div>
-                <span
-                  className="text-[10px] px-2 py-0.5 rounded-full font-semibold"
-                  style={{ backgroundColor: currentUser.color + '22', color: currentUser.color }}
-                >
-                  {currentUser.transactions.length} transactions
-                </span>
-              </div>
+              {(() => {
+                const totals = {}
+                for (const tx of currentUser.transactions) {
+                  const m = tx.valueFmt.match(/^([A-Z]+)\s+([\d,]+)/)
+                  if (!m) continue
+                  const ccy = m[1]
+                  const val = parseInt(m[2].replace(/,/g, ''), 10)
+                  if (!totals[ccy]) totals[ccy] = 0
+                  if (tx.type === 'BUY' || tx.type === 'SWAP') totals[ccy] += val
+                  else if (tx.type === 'SELL') totals[ccy] -= val
+                }
+                const totalLines = Object.entries(totals).map(([ccy, val]) =>
+                  `${ccy} ${val.toLocaleString()}`
+                )
+                return (
+                  <div className="mb-3">
+                    <div className="flex items-center justify-between mb-1">
+                      <div className="flex items-center gap-2">
+                        <div className="w-1 h-4 rounded-full" style={{ backgroundColor: currentUser.color }} />
+                        <span className="text-xs font-semibold text-dbs-text uppercase tracking-wider">Your Portfolio</span>
+                      </div>
+                      <span
+                        className="text-[10px] px-2 py-0.5 rounded-full font-semibold"
+                        style={{ backgroundColor: currentUser.color + '22', color: currentUser.color }}
+                      >
+                        {currentUser.transactions.length} transactions
+                      </span>
+                    </div>
+                    <div className="pl-3 border-l-2 mt-2" style={{ borderColor: currentUser.color + '55' }}>
+                      <div className="text-[10px] text-dbs-faint uppercase tracking-wider mb-0.5">Total Assets</div>
+                      {totalLines.map(line => (
+                        <div key={line} className="text-sm font-semibold font-mono text-dbs-text">{line}</div>
+                      ))}
+                    </div>
+                  </div>
+                )
+              })()}
               <div className="space-y-1">
                 {currentUser.transactions.slice().reverse().map((tx, i) => {
                   const typeStyle = {
@@ -699,7 +724,7 @@ export default function App() {
       {/* ── Input ── */}
       <div className="flex-shrink-0 bg-white border-t border-dbs-border px-4 py-4">
         <div className="max-w-3xl mx-auto">
-          <div className="flex items-end gap-3 bg-white border border-dbs-border rounded px-4 py-3 focus-within:border-dbs-border-md transition-colors shadow-dbs">
+          <div className="flex items-end gap-3 bg-white border border-dbs-border rounded px-4 py-3 focus-within:border-dbs-red focus-within:ring-2 focus-within:ring-dbs-red/20 transition-colors shadow-dbs">
             <textarea
               ref={inputRef}
               value={input}
