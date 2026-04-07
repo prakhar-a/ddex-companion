@@ -283,7 +283,7 @@ export default function App() {
         {isEmpty ? (
 
           /* Landing */
-          <div className="max-w-3xl mx-auto px-4 py-10">
+          <div className="max-w-5xl mx-auto px-4 py-10">
             {/* Hero */}
             <div className="flex items-start gap-6 mb-8">
               <div className="flex-shrink-0">
@@ -377,7 +377,7 @@ export default function App() {
         ) : (
 
           /* Chat messages */
-          <div className="max-w-3xl mx-auto px-4 py-6">
+          <div className="max-w-5xl mx-auto px-4 py-6">
             {messages.map((msg, i) => (
               <MessageBubble key={i} msg={msg} priceData={prices} />
             ))}
@@ -390,7 +390,7 @@ export default function App() {
 
       {/* ── Input ── */}
       <div className="flex-shrink-0 bg-white border-t border-dbs-border px-4 py-4">
-        <div className="max-w-3xl mx-auto">
+        <div className="max-w-5xl mx-auto">
           <div className="flex items-end gap-3 bg-white border border-dbs-border rounded px-4 py-3 focus-within:border-dbs-border-md transition-colors shadow-dbs">
             <textarea
               ref={inputRef}

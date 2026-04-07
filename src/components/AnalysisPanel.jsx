@@ -148,7 +148,7 @@ Write 3 short paragraphs: (1) Technical outlook, (2) Fundamental context, (3) Ke
   const displayData = history.length > 60 ? history.filter((_, i) => i % Math.ceil(history.length / 60) === 0) : history
 
   return (
-    <div className="bg-white border border-dbs-border rounded shadow-dbs overflow-hidden w-full max-w-lg">
+    <div className="bg-white border border-dbs-border rounded shadow-dbs overflow-hidden w-full">
       {/* Header */}
       <div className="p-4 border-b border-dbs-border">
         <div className="flex items-center justify-between">
