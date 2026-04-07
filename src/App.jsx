@@ -705,6 +705,28 @@ export default function App() {
               </span>
             </div>
 
+            {/* Total Assets */}
+            {(() => {
+              const totals = {}
+              for (const tx of currentUser.transactions) {
+                const m = tx.valueFmt.match(/^([A-Z]+)\s+([\d,]+)/)
+                if (!m) continue
+                const ccy = m[1]
+                const val = parseInt(m[2].replace(/,/g, ''), 10)
+                if (!totals[ccy]) totals[ccy] = 0
+                if (tx.type === 'BUY' || tx.type === 'SWAP') totals[ccy] += val
+                else if (tx.type === 'SELL') totals[ccy] -= val
+              }
+              return (
+                <div className="px-4 py-3 border-b border-dbs-border flex-shrink-0" style={{ borderLeftColor: currentUser.color }}>
+                  <div className="text-[10px] text-dbs-faint uppercase tracking-wider mb-1">Total Assets</div>
+                  {Object.entries(totals).map(([ccy, val]) => (
+                    <div key={ccy} className="text-sm font-semibold font-mono text-dbs-text">{ccy} {val.toLocaleString()}</div>
+                  ))}
+                </div>
+              )
+            })()}
+
             {/* Transactions */}
             <div className="flex-1 divide-y divide-dbs-border/40">
               {currentUser.transactions.slice().reverse().map((tx, i) => {
@@ -754,7 +776,7 @@ export default function App() {
       {/* ── Input ── */}
       <div className="flex-shrink-0 bg-white border-t border-dbs-border px-4 py-4">
         <div className="max-w-3xl mx-auto">
-          <div className="flex items-end gap-3 bg-white border border-dbs-border rounded px-4 py-3 focus-within:border-dbs-border-md transition-colors shadow-dbs">
+          <div className="flex items-end gap-3 bg-white border border-dbs-border rounded px-4 py-3 focus-within:border-dbs-red focus-within:ring-2 focus-within:ring-dbs-red/20 transition-colors shadow-dbs">
             <textarea
               ref={inputRef}
               value={input}
