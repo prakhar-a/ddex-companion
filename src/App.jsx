@@ -644,49 +644,61 @@ export default function App() {
 
         {/* ── Portfolio Sidebar (permanent, right) ── */}
         {currentUser.transactions.length > 0 && (
-          <div className="w-72 flex-shrink-0 border-l border-dbs-border bg-white overflow-y-auto">
-            <div className="p-4">
-              <div className="flex items-center justify-between mb-3">
-                <div className="flex items-center gap-2">
-                  <div className="w-1 h-4 rounded-full" style={{ backgroundColor: currentUser.color }} />
-                  <span className="text-xs font-semibold text-dbs-text uppercase tracking-wider">Your Portfolio</span>
-                </div>
-                <span
-                  className="text-[10px] px-2 py-0.5 rounded-full font-semibold"
-                  style={{ backgroundColor: currentUser.color + '22', color: currentUser.color }}
-                >
-                  {currentUser.transactions.length} transactions
-                </span>
+          <div className="w-72 flex-shrink-0 border-l border-dbs-border bg-white overflow-y-auto flex flex-col">
+            {/* Header */}
+            <div className="px-4 pt-4 pb-3 border-b border-dbs-border flex items-center justify-between flex-shrink-0">
+              <div className="flex items-center gap-2">
+                <div className="w-1 h-4 rounded-full" style={{ backgroundColor: currentUser.color }} />
+                <span className="text-xs font-semibold text-dbs-text uppercase tracking-wider">Transaction History</span>
               </div>
-              <div className="space-y-1">
-                {currentUser.transactions.slice().reverse().map((tx, i) => {
-                  const typeStyle = {
-                    BUY:    { bg: '#dcfce7', color: '#16a34a' },
-                    SELL:   { bg: '#fee2e2', color: '#dc2626' },
-                    SWAP:   { bg: '#dbeafe', color: '#2563eb' },
-                    YIELD:  { bg: '#fef9c3', color: '#a16207' },
-                    COUPON: { bg: '#fef9c3', color: '#a16207' },
-                  }[tx.type] || { bg: '#f3f4f6', color: '#6b7280' }
-                  return (
-                    <div key={i} className="flex items-center gap-2 py-2 border-b border-dbs-border/40 last:border-0">
-                      <span
-                        className="text-[9px] font-bold px-1.5 py-0.5 rounded flex-shrink-0 w-12 text-center"
-                        style={{ backgroundColor: typeStyle.bg, color: typeStyle.color }}
-                      >
-                        {tx.type}
-                      </span>
-                      <div className="flex-1 min-w-0">
-                        <div className="text-xs font-semibold text-dbs-text truncate">{tx.asset}</div>
-                        {tx.note && <div className="text-[10px] text-dbs-faint truncate">{tx.note}</div>}
+              <span
+                className="text-[10px] px-2 py-0.5 rounded-full font-semibold"
+                style={{ backgroundColor: currentUser.color + '22', color: currentUser.color }}
+              >
+                {currentUser.transactions.length} total
+              </span>
+            </div>
+
+            {/* Transactions */}
+            <div className="flex-1 divide-y divide-dbs-border/40">
+              {currentUser.transactions.slice().reverse().map((tx, i) => {
+                const typeStyle = {
+                  BUY:    { bg: '#dcfce7', color: '#16a34a' },
+                  SELL:   { bg: '#fee2e2', color: '#dc2626' },
+                  SWAP:   { bg: '#dbeafe', color: '#2563eb' },
+                  YIELD:  { bg: '#fef9c3', color: '#a16207' },
+                  COUPON: { bg: '#fef9c3', color: '#a16207' },
+                }[tx.type] || { bg: '#f3f4f6', color: '#6b7280' }
+                return (
+                  <div key={i} className="px-4 py-3">
+                    <div className="flex items-center justify-between mb-1">
+                      <div className="flex items-center gap-1.5">
+                        <span
+                          className="text-[9px] font-bold px-1.5 py-0.5 rounded"
+                          style={{ backgroundColor: typeStyle.bg, color: typeStyle.color }}
+                        >
+                          {tx.type}
+                        </span>
+                        <span className="text-xs font-semibold text-dbs-text">{tx.asset}</span>
                       </div>
-                      <div className="text-right flex-shrink-0">
-                        <div className="text-xs font-mono text-dbs-text">{tx.valueFmt}</div>
-                        <div className="text-[10px] text-dbs-faint">{tx.date}</div>
-                      </div>
+                      <span className="text-xs font-mono text-dbs-text">{tx.valueFmt}</span>
                     </div>
-                  )
-                })}
-              </div>
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        {tx.amount > 0 && (
+                          <span className="text-[10px] text-dbs-muted font-mono">
+                            {tx.amount.toLocaleString()} {tx.asset.split('-')[0]}
+                          </span>
+                        )}
+                        {tx.note && (
+                          <span className="text-[10px] text-dbs-faint">{tx.note}</span>
+                        )}
+                      </div>
+                      <span className="text-[10px] text-dbs-faint">{tx.date}</span>
+                    </div>
+                  </div>
+                )
+              })}
             </div>
           </div>
         )}
