@@ -153,20 +153,22 @@ function LiveTicker({ prices }) {
 
 function DbsLogo() {
   return (
-    <div className="flex items-center gap-2">
+    <div className="flex items-center gap-2.5">
       {/* DBS Spark icon */}
-      <svg width="36" height="36" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <svg width="38" height="38" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+        {/* Pincushion spark shape: 4 rounded lobes at N/E/S/W, concave pinch at NE/SE/SW/NW */}
         <path
-          d="M20 1.5 C25.5 1.5,34 6.5,34 14 C34 16.5,38.5 17,38.5 20 C38.5 23,34 23.5,34 26 C34 33.5,25.5 38.5,20 38.5 C14.5 38.5,6 33.5,6 26 C6 23.5,1.5 23,1.5 20 C1.5 17,6 16.5,6 14 C6 6.5,14.5 1.5,20 1.5 Z"
-          fill="#DA291C"
+          d="M50 5 C63 5,79 18,79 29 C79 38,95 38,95 50 C95 62,79 62,79 71 C79 82,63 95,50 95 C37 95,21 82,21 71 C21 62,5 62,5 50 C5 38,21 38,21 29 C21 18,37 5,50 5 Z"
+          fill="#EF3340"
         />
+        {/* White tapered X — 4 arms pointing to diagonal corners */}
         <path
-          d="M20 17.8 L31.5 6 L33.8 8.3 L21.8 20 L33.8 31.7 L31.5 34 L20 22.2 L8.5 34 L6.2 31.7 L18.2 20 L6.2 8.3 L8.5 6 Z"
+          d="M50 45 L77 18 L82 23 L55 50 L82 77 L77 82 L50 55 L23 82 L18 77 L45 50 L18 23 L23 18 Z"
           fill="white"
         />
       </svg>
       {/* DBS wordmark */}
-      <span style={{ fontFamily: 'Georgia, "Times New Roman", serif', fontSize: '20px', fontWeight: '900', color: '#111', letterSpacing: '-0.5px', lineHeight: 1 }}>DBS</span>
+      <span style={{ fontFamily: 'Georgia, "Times New Roman", serif', fontSize: '22px', fontWeight: '900', color: '#0d0d0d', letterSpacing: '-0.5px', lineHeight: 1 }}>DBS</span>
     </div>
   )
 }
