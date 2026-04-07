@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
 import { Send, RotateCcw, History, X, Trash2, Info } from 'lucide-react'
-import { sendMessage, parseDirectives } from './utils/openrouter'
+import { processMessage } from './utils/openrouter'
 import { useLivePrices } from './hooks/useCoinGecko'
 import { PRODUCTS, PRODUCT_LIST } from './data/products'
 import { USERS, DEFAULT_USER } from './data/users'
@@ -8,6 +8,8 @@ import ProductCard from './components/ProductCard'
 import AnalysisPanel from './components/AnalysisPanel'
 import SgBenjiCard from './components/SgBenjiCard'
 import UserSwitcher from './components/UserSwitcher'
+import PortfolioAnalyser from './components/PortfolioAnalyser'
+import SuitabilityReasoner from './components/SuitabilityReasoner'
 
 const CRYPTO_IDS = ['bitcoin', 'ethereum', 'ripple-usd']
 const SESSIONS_KEY = 'ddex_chat_sessions'
@@ -86,38 +88,69 @@ function filterProducts(filter) {
 
 // ── Sub-components ───────────────────────────────────────────────────────────
 
-function RichContent({ directives, priceData }) {
-  if (!directives?.length) return null
-  return (
-    <div className="space-y-3 mt-3">
-      {directives.map((d, i) => {
-        if (d.type === 'SHOW_PRODUCTS') {
-          const products = filterProducts(d.filter)
-          return (
-            <div key={i} className="space-y-3">
-              {products.map(p => (
-                <ProductCard key={p.id} product={p} priceData={priceData} />
-              ))}
-            </div>
-          )
-        }
-        if (d.type === 'SHOW_PRODUCT') {
-          const p = PRODUCTS[d.id]
-          if (!p) return null
-          return <ProductCard key={i} product={p} priceData={priceData} />
-        }
-        if (d.type === 'SHOW_ANALYSIS') {
-          const coin = d.coin?.toLowerCase()
-          if (!['btc', 'eth'].includes(coin)) return null
-          return <AnalysisPanel key={i} coin={coin} priceData={priceData} />
-        }
-        if (d.type === 'SHOW_SGBENJI') {
-          return <SgBenjiCard key={i} />
-        }
-        return null
-      })}
-    </div>
-  )
+function RichContent({ intent, priceData, currentUser, onAppendMessage }) {
+  if (!intent || intent.type === 'general') return null
+
+  if (intent.type === 'show_products') {
+    const products = filterProducts(intent.filter)
+    return (
+      <div className="space-y-3 mt-3">
+        {products.map(p => (
+          <ProductCard key={p.id} product={p} priceData={priceData} />
+        ))}
+      </div>
+    )
+  }
+
+  if (intent.type === 'show_product') {
+    const p = PRODUCTS[intent.id]
+    if (!p) return null
+    return (
+      <div className="mt-3">
+        <ProductCard product={p} priceData={priceData} />
+      </div>
+    )
+  }
+
+  if (intent.type === 'show_analysis') {
+    const coin = intent.coin?.toLowerCase()
+    if (!['btc', 'eth'].includes(coin)) return null
+    return (
+      <div className="mt-3">
+        <AnalysisPanel coin={coin} priceData={priceData} />
+      </div>
+    )
+  }
+
+  if (intent.type === 'show_sgbenji') {
+    return (
+      <div className="mt-3">
+        <SgBenjiCard />
+      </div>
+    )
+  }
+
+  if (intent.type === 'portfolio_analysis') {
+    return (
+      <PortfolioAnalyser
+        user={currentUser}
+        question={intent.question}
+        onResult={text => onAppendMessage?.(text)}
+      />
+    )
+  }
+
+  if (intent.type === 'suitability_check') {
+    return (
+      <SuitabilityReasoner
+        user={currentUser}
+        productId={intent.productId}
+        onResult={text => onAppendMessage?.(text)}
+      />
+    )
+  }
+
+  return null
 }
 
 function FormattedText({ text }) {
@@ -134,7 +167,7 @@ function FormattedText({ text }) {
   )
 }
 
-function MessageBubble({ msg, priceData }) {
+function MessageBubble({ msg, priceData, currentUser, onAppendMessage }) {
   const isUser = msg.role === 'user'
   return (
     <div className={`msg-enter flex ${isUser ? 'justify-end' : 'justify-start'} mb-4`}>
@@ -157,8 +190,13 @@ function MessageBubble({ msg, priceData }) {
             </p>
           ))}
         </div>
-        {msg.directives?.length > 0 && (
-          <RichContent directives={msg.directives} priceData={priceData} />
+        {!isUser && msg.intent && (
+          <RichContent
+            intent={msg.intent}
+            priceData={priceData}
+            currentUser={currentUser}
+            onAppendMessage={onAppendMessage}
+          />
         )}
       </div>
     </div>
@@ -345,6 +383,14 @@ export default function App() {
     setSessions(loadSessions())
   }, [messages]) // eslint-disable-line react-hooks/exhaustive-deps
 
+  const handleAppendMessage = useCallback((text) => {
+    setMessages(prev => [...prev, {
+      role: 'assistant',
+      content: text,
+      intent: { type: 'general' },
+    }])
+  }, [])
+
   const handleSend = useCallback(async (text) => {
     const content = (text || input).trim()
     if (!content || loading) return
@@ -363,19 +409,18 @@ export default function App() {
         role: m.role,
         content: m.content,
       }))
-      const raw = await sendMessage(history)
-      const { text: cleanText, directives } = parseDirectives(raw)
+      const { text: responseText, intent } = await processMessage(history)
       setMessages(prev => [...prev, {
         role: 'assistant',
-        content: cleanText,
-        directives,
+        content: responseText,
+        intent,
       }])
     } catch (e) {
       console.error(e)
       setMessages(prev => [...prev, {
         role: 'assistant',
         content: `Error: ${e.message}`,
-        directives: [],
+        intent: { type: 'general' },
       }])
     } finally {
       setLoading(false)
@@ -628,7 +673,13 @@ export default function App() {
             /* Chat messages */
             <div className="max-w-3xl mx-auto px-4 py-6">
               {messages.map((msg, i) => (
-                <MessageBubble key={i} msg={msg} priceData={prices} />
+                <MessageBubble
+                  key={i}
+                  msg={msg}
+                  priceData={prices}
+                  currentUser={currentUser}
+                  onAppendMessage={handleAppendMessage}
+                />
               ))}
               {loading && <TypingIndicator />}
               <div ref={bottomRef} />
