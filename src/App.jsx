@@ -153,10 +153,23 @@ function LiveTicker({ prices }) {
 
 function DbsLogo() {
   return (
-    <svg width="56" height="24" viewBox="0 0 56 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-label="DBS">
-      <rect width="56" height="24" rx="4" fill="#DA291C"/>
-      <text x="50%" y="50%" dominantBaseline="central" textAnchor="middle" fill="white" fontFamily="Arial, sans-serif" fontSize="11" fontWeight="700" letterSpacing="1">dbs</text>
-    </svg>
+    <div className="flex items-center gap-2.5">
+      {/* DBS Spark icon */}
+      <svg width="38" height="38" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+        {/* Pincushion spark shape: 4 rounded lobes at N/E/S/W, concave pinch at NE/SE/SW/NW */}
+        <path
+          d="M50 5 C63 5,79 18,79 29 C79 38,95 38,95 50 C95 62,79 62,79 71 C79 82,63 95,50 95 C37 95,21 82,21 71 C21 62,5 62,5 50 C5 38,21 38,21 29 C21 18,37 5,50 5 Z"
+          fill="#EF3340"
+        />
+        {/* White tapered X — 4 arms pointing to diagonal corners */}
+        <path
+          d="M50 45 L77 18 L82 23 L55 50 L82 77 L77 82 L50 55 L23 82 L18 77 L45 50 L18 23 L23 18 Z"
+          fill="white"
+        />
+      </svg>
+      {/* DBS wordmark */}
+      <span style={{ fontFamily: 'Georgia, "Times New Roman", serif', fontSize: '22px', fontWeight: '900', color: '#0d0d0d', letterSpacing: '-0.5px', lineHeight: 1 }}>DBS</span>
+    </div>
   )
 }
 
@@ -228,19 +241,16 @@ export default function App() {
       <header className="flex-shrink-0 bg-white border-b border-dbs-border px-5 py-3 flex items-center justify-between shadow-dbs">
         <div className="flex items-center gap-3">
           {/* Logo */}
-          <div className="flex items-center gap-2.5">
-            <div className="w-8 h-8 bg-dbs-red rounded flex items-center justify-center">
-              <span className="text-white text-[11px] font-bold tracking-tight">DBS</span>
+          <DbsLogo />
+          <div className="w-px h-6 bg-dbs-border" />
+          <div>
+            <div className="flex items-center gap-1.5">
+              <span className="text-sm font-semibold text-dbs-text">DDEx</span>
+              <span className="text-[10px] px-1.5 py-0.5 bg-dbs-red-light text-dbs-red rounded font-mono border border-dbs-red/20 font-semibold">
+                AI
+              </span>
             </div>
-            <div>
-              <div className="flex items-center gap-1.5">
-                <span className="text-sm font-semibold text-dbs-text">DDEx</span>
-                <span className="text-[10px] px-1.5 py-0.5 bg-dbs-red-light text-dbs-red rounded font-mono border border-dbs-red/20 font-semibold">
-                  AI
-                </span>
-              </div>
-              <div className="text-[10px] text-dbs-muted -mt-0.5">Digital Exchange Companion</div>
-            </div>
+            <div className="text-[10px] text-dbs-muted -mt-0.5">Digital Exchange Companion</div>
           </div>
 
           <div className="w-px h-5 bg-dbs-border" />
@@ -265,8 +275,6 @@ export default function App() {
               <span>New chat</span>
             </button>
           )}
-          <div className="w-px h-5 bg-dbs-border" />
-          <DbsLogo />
         </div>
       </header>
 
