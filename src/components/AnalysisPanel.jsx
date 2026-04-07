@@ -11,9 +11,9 @@ const RANGES = [
 ]
 
 const TABS = [
-  { id: 'overview', label: 'Overview' },
-  { id: 'technical', label: 'Technical' },
-  { id: 'flows', label: 'Flows & Sentiment' },
+  { id: 'overview', label: 'Price & Signal' },
+  { id: 'technical', label: 'Indicators' },
+  { id: 'flows', label: 'ETF Flows' },
 ]
 
 function computeRSI(prices, period = 14) {
@@ -169,9 +169,11 @@ RISKS:
           <div>
             <div className="text-sm font-bold text-dbs-text">{product.name}</div>
             {aiSections ? (
-              <div className={`mt-1.5 inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full border text-[11px] font-semibold ${sigCfg.bg} ${sigCfg.border} ${sigCfg.text}`}>
-                <span className={`w-1.5 h-1.5 rounded-full ${sigCfg.dot}`} />
-                {sigCfg.label} · {STRENGTH[aiSections.strength]}
+              <div className={`mt-2 inline-flex items-center gap-2 px-3 py-1.5 rounded border text-xs font-bold ${sigCfg.bg} ${sigCfg.border} ${sigCfg.text}`}>
+                <span className={`w-2 h-2 rounded-full ${sigCfg.dot}`} />
+                {sigCfg.label}
+                <span className="font-normal opacity-70">·</span>
+                {STRENGTH[aiSections.strength]}
               </div>
             ) : (
               <div className="text-[10px] text-dbs-muted mt-1">Loading signal…</div>

@@ -5,7 +5,7 @@
       "name": "DDEx Companion — Dev",
       "runtimeExecutable": "/opt/homebrew/bin/node",
       "runtimeArgs": ["/Users/prakhara/ddex-companion/node_modules/.bin/vite"],
-      "port": 5173,
+      "port": 5175,
       "autoPort": true
     },
     {
