@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from 'react'
+import { ChevronDown } from 'lucide-react'
 import { USERS } from '../data/users'
 
 const TYPE_COLORS = {
@@ -34,10 +35,30 @@ export default function UserSwitcher({ currentUser, onSwitch }) {
   }
 
   return (
-    <div ref={ref} className="fixed bottom-[72px] left-4 z-50">
-      {/* Popup panel */}
+    <div ref={ref} className="relative">
+      {/* Trigger button */}
+      <button
+        onClick={() => setOpen(o => !o)}
+        className={`flex items-center gap-2 pl-1 pr-2.5 py-1 bg-white border rounded-full shadow-dbs transition-all hover:shadow-md ${
+          open ? 'border-dbs-red' : 'border-dbs-border'
+        }`}
+      >
+        <div
+          className="w-6 h-6 rounded-full flex items-center justify-center text-white text-[10px] font-bold flex-shrink-0"
+          style={{ backgroundColor: currentUser.color }}
+        >
+          {currentUser.initials}
+        </div>
+        <div className="hidden sm:block text-left">
+          <div className="text-[11px] font-semibold text-dbs-text leading-none">{currentUser.name}</div>
+          <div className="text-[10px] text-dbs-muted leading-none mt-0.5">{currentUser.role}</div>
+        </div>
+        <ChevronDown size={11} className={`text-dbs-faint transition-transform ${open ? 'rotate-180' : ''}`} />
+      </button>
+
+      {/* Dropdown panel — opens downward from header */}
       {open && (
-        <div className="mb-2 w-72 bg-white border border-dbs-border rounded shadow-lg overflow-hidden">
+        <div className="absolute right-0 top-full mt-2 w-72 bg-white border border-dbs-border rounded shadow-lg overflow-hidden z-50">
 
           {/* Header */}
           <div className="px-4 py-3 border-b border-dbs-border bg-dbs-bg">
@@ -56,7 +77,6 @@ export default function UserSwitcher({ currentUser, onSwitch }) {
                     isActive ? 'bg-dbs-red-light' : 'hover:bg-dbs-bg'
                   }`}
                 >
-                  {/* Avatar */}
                   <div
                     className="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 text-white text-[11px] font-bold"
                     style={{ backgroundColor: user.color }}
@@ -64,7 +84,6 @@ export default function UserSwitcher({ currentUser, onSwitch }) {
                     {user.initials}
                   </div>
 
-                  {/* Info */}
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2">
                       <span className={`text-sm font-medium ${isActive ? 'text-dbs-red' : 'text-dbs-text'}`}>
@@ -79,7 +98,6 @@ export default function UserSwitcher({ currentUser, onSwitch }) {
                     <div className="text-[11px] text-dbs-muted">{user.role}</div>
                   </div>
 
-                  {/* Tx count */}
                   {user.transactions.length > 0 ? (
                     <span className="text-[10px] text-dbs-muted bg-dbs-bg px-2 py-0.5 rounded font-mono">
                       {user.transactions.length} tx
@@ -143,26 +161,6 @@ export default function UserSwitcher({ currentUser, onSwitch }) {
           )}
         </div>
       )}
-
-      {/* Trigger button */}
-      <button
-        onClick={() => setOpen(o => !o)}
-        className={`flex items-center gap-2 pl-1 pr-3 py-1 bg-white border rounded-full shadow-dbs transition-all hover:shadow-md ${
-          open ? 'border-dbs-red' : 'border-dbs-border'
-        }`}
-      >
-        <div
-          className="w-7 h-7 rounded-full flex items-center justify-center text-white text-[10px] font-bold flex-shrink-0"
-          style={{ backgroundColor: currentUser.color }}
-        >
-          {currentUser.initials}
-        </div>
-        <div className="text-left">
-          <div className="text-[11px] font-semibold text-dbs-text leading-none">{currentUser.name}</div>
-          <div className="text-[10px] text-dbs-muted leading-none mt-0.5">{currentUser.role}</div>
-        </div>
-        <span className="text-[9px] text-dbs-faint ml-1">▲</span>
-      </button>
     </div>
   )
 }

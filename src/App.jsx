@@ -323,7 +323,7 @@ export default function App() {
   const [currentUser, setCurrentUser] = useState(DEFAULT_USER)
   const bottomRef = useRef(null)
   const inputRef = useRef(null)
-  const { prices, loading: pricesLoading } = useLivePrices(CRYPTO_IDS)
+  const { prices } = useLivePrices(CRYPTO_IDS)
 
   // Auto-scroll
   useEffect(() => {
@@ -438,19 +438,9 @@ export default function App() {
             <div className="text-[10px] text-dbs-muted -mt-0.5">Digital Exchange Companion</div>
           </div>
 
-          <div className="w-px h-5 bg-dbs-border" />
-
-          {/* Live indicator */}
-          <div className="flex items-center gap-1.5">
-            <div className={`w-1.5 h-1.5 rounded-full ${pricesLoading ? 'bg-yellow-500' : 'bg-green-500 live-dot'}`} />
-            <span className="text-[10px] text-dbs-muted">
-              {pricesLoading ? 'Connecting…' : 'Live'}
-            </span>
-          </div>
         </div>
 
-        <div className="flex items-center gap-4">
-          <LiveTicker prices={prices} />
+        <div className="flex items-center gap-3">
 
           {/* About button */}
           <button
@@ -481,6 +471,11 @@ export default function App() {
               <span>New chat</span>
             </button>
           )}
+
+          <div className="w-px h-5 bg-dbs-border" />
+
+          {/* User switcher */}
+          <UserSwitcher currentUser={currentUser} onSwitch={handleUserSwitch} />
         </div>
       </header>
 
@@ -705,9 +700,6 @@ export default function App() {
 
       </div>
 
-      {/* ── User Switcher ── */}
-      <UserSwitcher currentUser={currentUser} onSwitch={handleUserSwitch} />
-
       {/* ── Input ── */}
       <div className="flex-shrink-0 bg-white border-t border-dbs-border px-4 py-4">
         <div className="max-w-3xl mx-auto">
@@ -738,9 +730,17 @@ export default function App() {
               }
             </button>
           </div>
-          <p className="text-[10px] text-dbs-faint text-center mt-2">
-            DDEx · Accredited & Institutional Investors Only · Not financial advice
-          </p>
+          <div className="flex justify-end mt-1.5">
+            <div className="group relative">
+              <button className="flex items-center gap-1 text-dbs-faint hover:text-dbs-muted transition-colors">
+                <Info size={11} />
+                <span className="text-[10px]">Disclaimer</span>
+              </button>
+              <div className="absolute bottom-full right-0 mb-2 w-72 bg-dbs-text text-white text-[10px] leading-relaxed px-3 py-2 rounded shadow-lg opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity z-10">
+                For accredited and institutional investors only · Not financial advice · Capital at risk · MAS-regulated · Not available to U.S. persons
+              </div>
+            </div>
+          </div>
         </div>
       </div>
 
