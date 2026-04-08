@@ -86,11 +86,6 @@ export default function ProductCard({ product, priceData, compact = false }) {
           </div>
         </div>
 
-        {/* Mini chart */}
-        {!compact && (
-          <PriceChart product={product} height={100} showRangeSelector={false} />
-        )}
-
         {/* Key stats row */}
         <div className="flex items-center gap-3 mt-3 pt-3 border-t border-dbs-border">
           <div className="flex items-center gap-1">
@@ -127,6 +122,9 @@ export default function ProductCard({ product, priceData, compact = false }) {
       {/* Expanded detail */}
       {expanded && (
         <div className="px-4 pb-4 space-y-3 border-t border-dbs-border pt-3">
+          {!compact && (
+            <PriceChart product={product} height={110} showRangeSelector={true} />
+          )}
           <p className="text-xs text-dbs-muted leading-relaxed">{product.description}</p>
 
           <div className="grid grid-cols-2 gap-2">
