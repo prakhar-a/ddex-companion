@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
 import { Send, RotateCcw, History, X, Trash2, Info } from 'lucide-react'
-import { sendMessage, parseDirectives } from './utils/openrouter'
+import { processMessage } from './utils/openrouter'
 import { useLivePrices } from './hooks/useCoinGecko'
 import { PRODUCTS, PRODUCT_LIST } from './data/products'
 import { USERS, DEFAULT_USER } from './data/users'
@@ -8,6 +8,8 @@ import ProductCard from './components/ProductCard'
 import AnalysisPanel from './components/AnalysisPanel'
 import SgBenjiCard from './components/SgBenjiCard'
 import UserSwitcher from './components/UserSwitcher'
+import PortfolioAnalyser from './components/PortfolioAnalyser'
+import SuitabilityReasoner from './components/SuitabilityReasoner'
 
 const CRYPTO_IDS = ['bitcoin', 'ethereum', 'ripple-usd']
 const SESSIONS_KEY = 'ddex_chat_sessions'
@@ -79,6 +81,12 @@ function filterProducts(filter) {
     case 'stable':
     case 'stablecoin':
       return PRODUCT_LIST.filter(p => p.category === 'Stablecoin' || p.id === 'sgbenji')
+    case 'btc':
+    case 'bitcoin':
+      return PRODUCT_LIST.filter(p => p.id === 'btc' || p.id === 'btcnote')
+    case 'eth':
+    case 'ethereum':
+      return PRODUCT_LIST.filter(p => p.id === 'eth')
     default:
       return PRODUCT_LIST
   }
@@ -86,38 +94,67 @@ function filterProducts(filter) {
 
 // ── Sub-components ───────────────────────────────────────────────────────────
 
-function RichContent({ directives, priceData }) {
-  if (!directives?.length) return null
-  return (
-    <div className="space-y-3 mt-3">
-      {directives.map((d, i) => {
-        if (d.type === 'SHOW_PRODUCTS') {
-          const products = filterProducts(d.filter)
-          return (
-            <div key={i} className="space-y-3">
-              {products.map(p => (
-                <ProductCard key={p.id} product={p} priceData={priceData} />
-              ))}
-            </div>
-          )
-        }
-        if (d.type === 'SHOW_PRODUCT') {
-          const p = PRODUCTS[d.id]
-          if (!p) return null
-          return <ProductCard key={i} product={p} priceData={priceData} />
-        }
-        if (d.type === 'SHOW_ANALYSIS') {
-          const coin = d.coin?.toLowerCase()
-          if (!['btc', 'eth'].includes(coin)) return null
-          return <AnalysisPanel key={i} coin={coin} priceData={priceData} />
-        }
-        if (d.type === 'SHOW_SGBENJI') {
-          return <SgBenjiCard key={i} />
-        }
-        return null
-      })}
-    </div>
-  )
+function RichContent({ intent, priceData, currentUser, onAppendMessage }) {
+  if (!intent || intent.type === 'general') return null
+
+  if (intent.type === 'show_products') {
+    const products = filterProducts(intent.filter)
+    return (
+      <div className="space-y-3 mt-3">
+        {products.map(p => (
+          <ProductCard key={p.id} product={p} priceData={priceData} />
+        ))}
+      </div>
+    )
+  }
+
+  if (intent.type === 'show_product') {
+    const p = PRODUCTS[intent.id]
+    if (!p) return null
+    return (
+      <div className="mt-3">
+        <ProductCard product={p} priceData={priceData} />
+      </div>
+    )
+  }
+
+  if (intent.type === 'show_analysis') {
+    const coin = intent.coin?.toLowerCase()
+    if (!['btc', 'eth'].includes(coin)) return null
+    return (
+      <div className="mt-3">
+        <AnalysisPanel coin={coin} priceData={priceData} />
+      </div>
+    )
+  }
+
+  if (intent.type === 'show_sgbenji') {
+    return (
+      <div className="mt-3">
+        <SgBenjiCard />
+      </div>
+    )
+  }
+
+  if (intent.type === 'portfolio_analysis') {
+    return (
+      <PortfolioAnalyser
+        user={currentUser}
+        question={intent.question}
+      />
+    )
+  }
+
+  if (intent.type === 'suitability_check') {
+    return (
+      <SuitabilityReasoner
+        user={currentUser}
+        productId={intent.productId}
+      />
+    )
+  }
+
+  return null
 }
 
 function FormattedText({ text }) {
@@ -134,7 +171,7 @@ function FormattedText({ text }) {
   )
 }
 
-function MessageBubble({ msg, priceData }) {
+function MessageBubble({ msg, priceData, currentUser, onAppendMessage }) {
   const isUser = msg.role === 'user'
   return (
     <div className={`msg-enter flex ${isUser ? 'justify-end' : 'justify-start'} mb-4`}>
@@ -157,8 +194,13 @@ function MessageBubble({ msg, priceData }) {
             </p>
           ))}
         </div>
-        {msg.directives?.length > 0 && (
-          <RichContent directives={msg.directives} priceData={priceData} />
+        {!isUser && msg.intent && (
+          <RichContent
+            intent={msg.intent}
+            priceData={priceData}
+            currentUser={currentUser}
+            onAppendMessage={onAppendMessage}
+          />
         )}
       </div>
     </div>
@@ -321,22 +363,34 @@ const TX_STYLE = {
 }
 
 function PortfolioSidebar({ currentUser, onClose }) {
+  const totals = {}
+  for (const tx of currentUser.transactions) {
+    const m = tx.valueFmt.match(/^([A-Z]+)\s+([\d,]+)/)
+    if (!m) continue
+    const ccy = m[1]
+    const val = parseInt(m[2].replace(/,/g, ''), 10)
+    if (!totals[ccy]) totals[ccy] = 0
+    if (tx.type === 'BUY' || tx.type === 'SWAP') totals[ccy] += val
+    else if (tx.type === 'SELL') totals[ccy] -= val
+  }
+
   return (
     <>
+      {/* Header */}
       <div
         className="px-4 py-3 border-b border-dbs-border flex items-center justify-between flex-shrink-0"
         style={{ background: `linear-gradient(135deg, ${currentUser.color}20 0%, ${currentUser.color}08 100%)` }}
       >
         <div className="flex items-center gap-2">
           <div className="w-1.5 h-4 rounded-full" style={{ backgroundColor: currentUser.color }} />
-          <span className="text-xs font-semibold text-dbs-text uppercase tracking-wider">Your Portfolio</span>
+          <span className="text-xs font-semibold text-dbs-text uppercase tracking-wider">Transaction History</span>
         </div>
         <div className="flex items-center gap-2">
           <span
             className="text-[10px] px-2 py-0.5 rounded-full font-semibold"
             style={{ backgroundColor: currentUser.color + '22', color: currentUser.color }}
           >
-            {currentUser.transactions.length} transactions
+            {currentUser.transactions.length} total
           </span>
           {onClose && (
             <button onClick={onClose} className="text-dbs-muted hover:text-dbs-text transition-colors">
@@ -345,30 +399,49 @@ function PortfolioSidebar({ currentUser, onClose }) {
           )}
         </div>
       </div>
-      <div className="p-4 overflow-y-auto flex-1">
-        <div className="space-y-1">
-          {currentUser.transactions.slice().reverse().map((tx, i) => {
-            const typeStyle = TX_STYLE[tx.type] || { bg: '#f3f4f6', color: '#6b7280' }
-            return (
-              <div key={i} className="flex items-center gap-2 py-2 border-b border-dbs-border/40 last:border-0">
-                <span
-                  className="text-[9px] font-bold px-1.5 py-0.5 rounded flex-shrink-0 w-12 text-center"
-                  style={{ backgroundColor: typeStyle.bg, color: typeStyle.color }}
-                >
-                  {tx.type}
-                </span>
-                <div className="flex-1 min-w-0">
-                  <div className="text-xs font-semibold text-dbs-text truncate">{tx.asset}</div>
-                  {tx.note && <div className="text-[10px] text-dbs-faint truncate">{tx.note}</div>}
+
+      {/* Total Assets */}
+      <div className="px-4 py-3 border-b border-dbs-border flex-shrink-0">
+        <div className="text-[10px] text-dbs-faint uppercase tracking-wider mb-1">Total Assets</div>
+        {Object.entries(totals).map(([ccy, val]) => (
+          <div key={ccy} className="text-sm font-semibold font-mono text-dbs-text">{ccy} {val.toLocaleString()}</div>
+        ))}
+      </div>
+
+      {/* Transactions */}
+      <div className="flex-1 divide-y divide-dbs-border/40 overflow-y-auto">
+        {currentUser.transactions.slice().reverse().map((tx, i) => {
+          const typeStyle = TX_STYLE[tx.type] || { bg: '#f3f4f6', color: '#6b7280' }
+          return (
+            <div key={i} className="px-4 py-3">
+              <div className="flex items-center justify-between mb-1">
+                <div className="flex items-center gap-1.5">
+                  <span
+                    className="text-[9px] font-bold px-1.5 py-0.5 rounded"
+                    style={{ backgroundColor: typeStyle.bg, color: typeStyle.color }}
+                  >
+                    {tx.type}
+                  </span>
+                  <span className="text-xs font-semibold text-dbs-text">{tx.asset}</span>
                 </div>
-                <div className="text-right flex-shrink-0">
-                  <div className="text-xs font-mono text-dbs-text">{tx.valueFmt}</div>
-                  <div className="text-[10px] text-dbs-faint">{tx.date}</div>
-                </div>
+                <span className="text-xs font-mono text-dbs-text">{tx.valueFmt}</span>
               </div>
-            )
-          })}
-        </div>
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  {tx.amount > 0 && (
+                    <span className="text-[10px] text-dbs-muted font-mono">
+                      {tx.amount.toLocaleString()} {tx.asset.split('-')[0]}
+                    </span>
+                  )}
+                  {tx.note && (
+                    <span className="text-[10px] text-dbs-faint">{tx.note}</span>
+                  )}
+                </div>
+                <span className="text-[10px] text-dbs-faint">{tx.date}</span>
+              </div>
+            </div>
+          )
+        })}
       </div>
     </>
   )
@@ -388,7 +461,7 @@ export default function App() {
   const [currentUser, setCurrentUser] = useState(DEFAULT_USER)
   const bottomRef = useRef(null)
   const inputRef = useRef(null)
-  const { prices, loading: pricesLoading } = useLivePrices(CRYPTO_IDS)
+  const { prices } = useLivePrices(CRYPTO_IDS)
 
   // Auto-scroll
   useEffect(() => {
@@ -410,6 +483,14 @@ export default function App() {
     setSessions(loadSessions())
   }, [messages]) // eslint-disable-line react-hooks/exhaustive-deps
 
+  const handleAppendMessage = useCallback((text) => {
+    setMessages(prev => [...prev, {
+      role: 'assistant',
+      content: text,
+      intent: { type: 'general' },
+    }])
+  }, [])
+
   const handleSend = useCallback(async (text) => {
     const content = (text || input).trim()
     if (!content || loading) return
@@ -428,19 +509,18 @@ export default function App() {
         role: m.role,
         content: m.content,
       }))
-      const raw = await sendMessage(history)
-      const { text: cleanText, directives } = parseDirectives(raw)
+      const { text: responseText, intent } = await processMessage(history)
       setMessages(prev => [...prev, {
         role: 'assistant',
-        content: cleanText,
-        directives,
+        content: responseText,
+        intent,
       }])
     } catch (e) {
       console.error(e)
       setMessages(prev => [...prev, {
         role: 'assistant',
         content: `Error: ${e.message}`,
-        directives: [],
+        intent: { type: 'general' },
       }])
     } finally {
       setLoading(false)
@@ -517,7 +597,7 @@ export default function App() {
           </div>
         </div>
 
-        <div className="flex items-center gap-3 sm:gap-4">
+        <div className="flex items-center gap-3">
           <LiveTicker prices={prices} />
 
           {/* Portfolio toggle — mobile only, shown when user has transactions */}
@@ -560,6 +640,11 @@ export default function App() {
               <span className="hidden sm:inline">New chat</span>
             </button>
           )}
+
+          <div className="w-px h-5 bg-dbs-border" />
+
+          {/* User switcher */}
+          <UserSwitcher currentUser={currentUser} onSwitch={handleUserSwitch} />
         </div>
       </header>
 
@@ -716,7 +801,13 @@ export default function App() {
             /* Chat messages */
             <div className="max-w-3xl mx-auto px-4 py-6">
               {messages.map((msg, i) => (
-                <MessageBubble key={i} msg={msg} priceData={prices} />
+                <MessageBubble
+                  key={i}
+                  msg={msg}
+                  priceData={prices}
+                  currentUser={currentUser}
+                  onAppendMessage={handleAppendMessage}
+                />
               ))}
               {loading && <TypingIndicator />}
               <div ref={bottomRef} />
@@ -746,13 +837,10 @@ export default function App() {
 
       </div>
 
-      {/* ── User Switcher ── */}
-      <UserSwitcher currentUser={currentUser} onSwitch={handleUserSwitch} />
-
       {/* ── Input ── */}
       <div className="flex-shrink-0 bg-white border-t border-dbs-border px-4 py-4">
         <div className="max-w-3xl mx-auto">
-          <div className="flex items-end gap-3 bg-white border border-dbs-border rounded-2xl px-5 py-3 focus-within:border-dbs-border-md transition-colors shadow-dbs">
+          <div className="flex items-end gap-3 bg-white border border-dbs-border rounded-2xl px-5 py-3 focus-within:border-dbs-red focus-within:ring-2 focus-within:ring-dbs-red/20 transition-colors shadow-dbs">
             <textarea
               ref={inputRef}
               value={input}
@@ -779,9 +867,17 @@ export default function App() {
               }
             </button>
           </div>
-          <p className="text-[10px] text-dbs-faint text-center mt-2">
-            DDEx · Accredited & Institutional Investors Only · Not financial advice
-          </p>
+          <div className="flex justify-end mt-1.5">
+            <div className="group relative">
+              <button className="flex items-center gap-1 text-dbs-faint hover:text-dbs-muted transition-colors">
+                <Info size={11} />
+                <span className="text-[10px]">Disclaimer</span>
+              </button>
+              <div className="absolute bottom-full right-0 mb-2 w-72 bg-dbs-text text-white text-[10px] leading-relaxed px-3 py-2 rounded shadow-lg opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity z-10">
+                For accredited and institutional investors only · Not financial advice · Capital at risk · MAS-regulated · Not available to U.S. persons
+              </div>
+            </div>
+          </div>
         </div>
       </div>
 

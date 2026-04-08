@@ -16,9 +16,6 @@ export const USERS = [
       'Analyse Bitcoin — how has it moved this week?',
       'What\'s the current ETH price and technical outlook?',
       'Should I increase my BTC allocation at current levels?',
-      'Show me technical analysis for Ethereum',
-      'What\'s the difference between spot BTC and the BTC Participation Note?',
-      'How do BTC and ETH correlate during market downturns?',
     ],
   },
   {
@@ -37,9 +34,6 @@ export const USERS = [
       'Show me the latest sgBENJI stats and current yield',
       'How does sgBENJI compare to a traditional money market fund?',
       'Can I use sgBENJI as repo collateral with DBS?',
-      'What are the risks of holding sgBENJI long-term?',
-      'How do I swap RLUSD to sgBENJI?',
-      'Is there a better yield option on DDEx than sgBENJI?',
     ],
   },
   {
@@ -58,9 +52,6 @@ export const USERS = [
       'Tell me about the DBS Digital Bond 2026',
       'When is my next coupon payment for DBS-BOND-26?',
       'How does the tokenised bond compare to traditional SGD corporate bonds?',
-      'What is the credit rating of the DBS Digital Bond?',
-      'What happens at bond maturity in December 2026?',
-      'Show me other yield-bearing products on DDEx',
     ],
   },
   {
@@ -72,11 +63,8 @@ export const USERS = [
     transactions: [],
     suggestedPrompts: [
       'What products are available on DDEx?',
-      'Who is eligible to invest on DDEx?',
       'I have USD 5,000,000 — what should I consider?',
       'Explain sgBENJI and show me the latest stats',
-      'Show me all yield-bearing products',
-      'What is the BTC Participation Note and how does it work?',
     ],
   },
 ]
