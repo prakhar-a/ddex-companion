@@ -461,7 +461,7 @@ export default function App() {
   const [currentUser, setCurrentUser] = useState(DEFAULT_USER)
   const bottomRef = useRef(null)
   const inputRef = useRef(null)
-  const { prices } = useLivePrices(CRYPTO_IDS)
+  const { prices, loading: pricesLoading } = useLivePrices(CRYPTO_IDS)
 
   // Auto-scroll
   useEffect(() => {
