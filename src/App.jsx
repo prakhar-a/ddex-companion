@@ -141,7 +141,6 @@ function RichContent({ intent, priceData, currentUser, onAppendMessage }) {
       <PortfolioAnalyser
         user={currentUser}
         question={intent.question}
-        onResult={text => onAppendMessage?.(text)}
       />
     )
   }
@@ -151,7 +150,6 @@ function RichContent({ intent, priceData, currentUser, onAppendMessage }) {
       <SuitabilityReasoner
         user={currentUser}
         productId={intent.productId}
-        onResult={text => onAppendMessage?.(text)}
       />
     )
   }
