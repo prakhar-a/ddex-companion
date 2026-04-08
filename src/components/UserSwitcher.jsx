@@ -37,7 +37,7 @@ export default function UserSwitcher({ currentUser, onSwitch }) {
     <div ref={ref} className="fixed bottom-[72px] left-4 z-50">
       {/* Popup panel */}
       {open && (
-        <div className="mb-2 w-72 bg-white border border-dbs-border rounded shadow-lg overflow-hidden">
+        <div className="mb-2 w-72 max-w-[calc(100vw-2rem)] bg-white border border-dbs-border rounded shadow-lg overflow-hidden">
 
           {/* Header */}
           <div className="px-4 py-3 border-b border-dbs-border bg-dbs-bg">
@@ -147,7 +147,7 @@ export default function UserSwitcher({ currentUser, onSwitch }) {
       {/* Trigger button */}
       <button
         onClick={() => setOpen(o => !o)}
-        className={`flex items-center gap-2 pl-1 pr-3 py-1 bg-white border rounded-full shadow-dbs transition-all hover:shadow-md ${
+        className={`flex items-center gap-2 pl-1 pr-1 sm:pr-3 py-1 bg-white border rounded-full shadow-dbs transition-all hover:shadow-md ${
           open ? 'border-dbs-red' : 'border-dbs-border'
         }`}
       >
@@ -157,11 +157,11 @@ export default function UserSwitcher({ currentUser, onSwitch }) {
         >
           {currentUser.initials}
         </div>
-        <div className="text-left">
+        <div className="hidden sm:block text-left">
           <div className="text-[11px] font-semibold text-dbs-text leading-none">{currentUser.name}</div>
           <div className="text-[10px] text-dbs-muted leading-none mt-0.5">{currentUser.role}</div>
         </div>
-        <span className="text-[9px] text-dbs-faint ml-1">▲</span>
+        <span className="hidden sm:inline text-[9px] text-dbs-faint ml-1">▲</span>
       </button>
     </div>
   )
