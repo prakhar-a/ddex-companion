@@ -256,9 +256,9 @@ function LiveTicker({ prices }) {
 
 function DbsLogo() {
   return (
-    <div className="flex items-center gap-3">
+    <div className="flex items-center gap-2 sm:gap-3">
       {/* DBS Spark icon — accurate pincushion shape matching official DBS logo */}
-      <svg width="40" height="40" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <svg className="w-8 h-8 sm:w-10 sm:h-10 flex-shrink-0" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
         {/* Pincushion: 8 smooth cubic bezier segments, outward lobes at N/E/S/W, concave pinch at diagonals */}
         <path
           d="M50,6 C62,6 80,20 80,32 C80,44 94,44 94,50 C94,56 80,56 80,68 C80,80 62,94 50,94 C38,94 20,80 20,68 C20,56 6,56 6,50 C6,44 20,44 20,32 C20,20 38,6 50,6 Z"
@@ -270,8 +270,8 @@ function DbsLogo() {
           fill="white"
         />
       </svg>
-      {/* DBS wordmark */}
-      <span style={{ fontFamily: 'Georgia, "Times New Roman", serif', fontSize: '26px', fontWeight: '900', color: '#0a0a0a', letterSpacing: '-1px', lineHeight: 1 }}>DBS</span>
+      {/* DBS wordmark — hidden on small screens */}
+      <span className="hidden sm:inline" style={{ fontFamily: 'Georgia, "Times New Roman", serif', fontSize: '26px', fontWeight: '900', color: '#0a0a0a', letterSpacing: '-1px', lineHeight: 1 }}>DBS</span>
     </div>
   )
 }
@@ -352,6 +352,101 @@ function HistorySidebar({ sessions, currentId, onLoad, onDelete, onClose }) {
   )
 }
 
+// ── Portfolio Sidebar Content ─────────────────────────────────────────────────
+
+const TX_STYLE = {
+  BUY:    { bg: '#dcfce7', color: '#16a34a' },
+  SELL:   { bg: '#fee2e2', color: '#dc2626' },
+  SWAP:   { bg: '#dbeafe', color: '#2563eb' },
+  YIELD:  { bg: '#fef9c3', color: '#a16207' },
+  COUPON: { bg: '#fef9c3', color: '#a16207' },
+}
+
+function PortfolioSidebar({ currentUser, onClose }) {
+  const totals = {}
+  for (const tx of currentUser.transactions) {
+    const m = tx.valueFmt.match(/^([A-Z]+)\s+([\d,]+)/)
+    if (!m) continue
+    const ccy = m[1]
+    const val = parseInt(m[2].replace(/,/g, ''), 10)
+    if (!totals[ccy]) totals[ccy] = 0
+    if (tx.type === 'BUY' || tx.type === 'SWAP') totals[ccy] += val
+    else if (tx.type === 'SELL') totals[ccy] -= val
+  }
+
+  return (
+    <>
+      {/* Header */}
+      <div
+        className="px-4 py-3 border-b border-dbs-border flex items-center justify-between flex-shrink-0"
+        style={{ background: `linear-gradient(135deg, ${currentUser.color}20 0%, ${currentUser.color}08 100%)` }}
+      >
+        <div className="flex items-center gap-2">
+          <div className="w-1.5 h-4 rounded-full" style={{ backgroundColor: currentUser.color }} />
+          <span className="text-xs font-semibold text-dbs-text uppercase tracking-wider">Transaction History</span>
+        </div>
+        <div className="flex items-center gap-2">
+          <span
+            className="text-[10px] px-2 py-0.5 rounded-full font-semibold"
+            style={{ backgroundColor: currentUser.color + '22', color: currentUser.color }}
+          >
+            {currentUser.transactions.length} total
+          </span>
+          {onClose && (
+            <button onClick={onClose} className="text-dbs-muted hover:text-dbs-text transition-colors">
+              <X size={14} />
+            </button>
+          )}
+        </div>
+      </div>
+
+      {/* Total Assets */}
+      <div className="px-4 py-3 border-b border-dbs-border flex-shrink-0">
+        <div className="text-[10px] text-dbs-faint uppercase tracking-wider mb-1">Total Assets</div>
+        {Object.entries(totals).map(([ccy, val]) => (
+          <div key={ccy} className="text-sm font-semibold font-mono text-dbs-text">{ccy} {val.toLocaleString()}</div>
+        ))}
+      </div>
+
+      {/* Transactions */}
+      <div className="flex-1 divide-y divide-dbs-border/40 overflow-y-auto">
+        {currentUser.transactions.slice().reverse().map((tx, i) => {
+          const typeStyle = TX_STYLE[tx.type] || { bg: '#f3f4f6', color: '#6b7280' }
+          return (
+            <div key={i} className="px-4 py-3">
+              <div className="flex items-center justify-between mb-1">
+                <div className="flex items-center gap-1.5">
+                  <span
+                    className="text-[9px] font-bold px-1.5 py-0.5 rounded"
+                    style={{ backgroundColor: typeStyle.bg, color: typeStyle.color }}
+                  >
+                    {tx.type}
+                  </span>
+                  <span className="text-xs font-semibold text-dbs-text">{tx.asset}</span>
+                </div>
+                <span className="text-xs font-mono text-dbs-text">{tx.valueFmt}</span>
+              </div>
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  {tx.amount > 0 && (
+                    <span className="text-[10px] text-dbs-muted font-mono">
+                      {tx.amount.toLocaleString()} {tx.asset.split('-')[0]}
+                    </span>
+                  )}
+                  {tx.note && (
+                    <span className="text-[10px] text-dbs-faint">{tx.note}</span>
+                  )}
+                </div>
+                <span className="text-[10px] text-dbs-faint">{tx.date}</span>
+              </div>
+            </div>
+          )
+        })}
+      </div>
+    </>
+  )
+}
+
 // ── Main App ─────────────────────────────────────────────────────────────────
 
 export default function App() {
@@ -362,6 +457,7 @@ export default function App() {
   const [sessions, setSessions] = useState(() => loadSessions())
   const [showHistory, setShowHistory] = useState(false)
   const [showInfo, setShowInfo] = useState(false)
+  const [showPortfolio, setShowPortfolio] = useState(false)
   const [currentUser, setCurrentUser] = useState(DEFAULT_USER)
   const bottomRef = useRef(null)
   const inputRef = useRef(null)
@@ -475,11 +571,11 @@ export default function App() {
       <div className="flex-shrink-0 h-[3px] bg-dbs-red" />
 
       {/* ── Header ── */}
-      <header className="flex-shrink-0 bg-white border-b border-dbs-border px-5 py-3 flex items-center justify-between shadow-dbs-md">
-        <div className="flex items-center gap-3">
+      <header className="flex-shrink-0 bg-white border-b border-dbs-border px-3 sm:px-5 py-3 flex items-center justify-between shadow-dbs-md">
+        <div className="flex items-center gap-2 sm:gap-3">
           {/* Logo */}
           <DbsLogo />
-          <div className="w-px h-6 bg-dbs-border" />
+          <div className="hidden sm:block w-px h-6 bg-dbs-border" />
           <div>
             <div className="flex items-center gap-1.5">
               <span className="text-sm font-semibold text-dbs-text">DDEx</span>
@@ -487,12 +583,33 @@ export default function App() {
                 AI
               </span>
             </div>
-            <div className="text-[10px] text-dbs-muted -mt-0.5">Digital Exchange Companion</div>
+            <div className="hidden sm:block text-[10px] text-dbs-muted -mt-0.5">Digital Exchange Companion</div>
           </div>
 
+          <div className="hidden sm:block w-px h-5 bg-dbs-border" />
+
+          {/* Live indicator — hidden on mobile */}
+          <div className="hidden sm:flex items-center gap-1.5">
+            <div className={`w-1.5 h-1.5 rounded-full ${pricesLoading ? 'bg-yellow-500' : 'bg-green-500 live-dot'}`} />
+            <span className="text-[10px] text-dbs-muted">
+              {pricesLoading ? 'Connecting…' : 'Live'}
+            </span>
+          </div>
         </div>
 
         <div className="flex items-center gap-3">
+          <LiveTicker prices={prices} />
+
+          {/* Portfolio toggle — mobile only, shown when user has transactions */}
+          {currentUser.transactions.length > 0 && (
+            <button
+              onClick={() => setShowPortfolio(true)}
+              className="md:hidden flex items-center gap-1.5 text-[11px] text-dbs-muted hover:text-dbs-text transition-colors"
+              title="View portfolio"
+            >
+              <span>Portfolio</span>
+            </button>
+          )}
 
           {/* About button */}
           <button
@@ -520,7 +637,7 @@ export default function App() {
               className="flex items-center gap-1.5 text-[11px] text-dbs-muted hover:text-dbs-text transition-colors"
             >
               <RotateCcw size={11} />
-              <span>New chat</span>
+              <span className="hidden sm:inline">New chat</span>
             </button>
           )}
 
@@ -546,7 +663,7 @@ export default function App() {
       {showInfo && (
         <div className="fixed inset-0 z-50 flex">
           <div className="absolute inset-0 bg-black/30" onClick={() => setShowInfo(false)} />
-          <div className="relative mr-auto w-full max-w-sm bg-white h-full shadow-xl flex flex-col overflow-y-auto">
+          <div className="relative mr-auto w-full max-w-sm bg-white h-full shadow-xl flex flex-col overflow-y-auto" style={{ maxWidth: 'min(384px, 100vw)' }}>
             <div className="flex items-center justify-between px-5 py-4 border-b border-dbs-border">
               <div className="flex items-center gap-2">
                 <div className="w-1 h-4 bg-dbs-red rounded-full" />
@@ -620,16 +737,16 @@ export default function App() {
           {isEmpty ? (
 
             /* Landing */
-            <div className="relative max-w-2xl mx-auto px-4 py-14">
+            <div className="relative max-w-2xl mx-auto px-4 py-8 sm:py-14">
               {/* Radial gradient overlay */}
               <div className="absolute inset-x-0 top-0 h-80 pointer-events-none" style={{ background: 'radial-gradient(ellipse at 50% 0%, rgba(218,41,28,0.06) 0%, transparent 65%)' }} />
 
               {/* Hero — centered */}
-              <div className="relative text-center mb-10">
-                <div className="w-20 h-20 bg-dbs-red rounded-xl flex items-center justify-center mx-auto mb-5 shadow-dbs-md">
-                  <span className="text-white text-3xl font-bold tracking-tight">D</span>
+              <div className="relative text-center mb-7 sm:mb-10">
+                <div className="w-16 h-16 sm:w-20 sm:h-20 bg-dbs-red rounded-xl flex items-center justify-center mx-auto mb-4 sm:mb-5 shadow-dbs-md">
+                  <span className="text-white text-2xl sm:text-3xl font-bold tracking-tight">D</span>
                 </div>
-                <h1 className="text-3xl font-bold text-dbs-text mb-2 tracking-tight">
+                <h1 className="text-2xl sm:text-3xl font-bold text-dbs-text mb-2 tracking-tight">
                   {currentUser.id === 'new'
                     ? 'Welcome to DDEx AI Companion'
                     : `Welcome back, ${currentUser.name.split(' ')[0]}`}
@@ -699,90 +816,23 @@ export default function App() {
           )}
         </div>
 
-        {/* ── Portfolio Sidebar (permanent, right) ── */}
+        {/* ── Portfolio Sidebar ── */}
         {currentUser.transactions.length > 0 && (
-          <div className="w-72 flex-shrink-0 border-l border-dbs-border bg-white overflow-y-auto flex flex-col">
-            {/* Gradient header */}
-            <div
-              className="px-4 py-3 border-b border-dbs-border flex items-center justify-between flex-shrink-0"
-              style={{ background: `linear-gradient(135deg, ${currentUser.color}20 0%, ${currentUser.color}08 100%)` }}
-            >
-              <div className="flex items-center gap-2">
-                <div className="w-1.5 h-4 rounded-full" style={{ backgroundColor: currentUser.color }} />
-                <span className="text-xs font-semibold text-dbs-text uppercase tracking-wider">Transaction History</span>
-              </div>
-              <span
-                className="text-[10px] px-2 py-0.5 rounded-full font-semibold"
-                style={{ backgroundColor: currentUser.color + '22', color: currentUser.color }}
-              >
-                {currentUser.transactions.length} total
-              </span>
-            </div>
-
-            {/* Total Assets */}
-            {(() => {
-              const totals = {}
-              for (const tx of currentUser.transactions) {
-                const m = tx.valueFmt.match(/^([A-Z]+)\s+([\d,]+)/)
-                if (!m) continue
-                const ccy = m[1]
-                const val = parseInt(m[2].replace(/,/g, ''), 10)
-                if (!totals[ccy]) totals[ccy] = 0
-                if (tx.type === 'BUY' || tx.type === 'SWAP') totals[ccy] += val
-                else if (tx.type === 'SELL') totals[ccy] -= val
-              }
-              return (
-                <div className="px-4 py-3 border-b border-dbs-border flex-shrink-0">
-                  <div className="text-[10px] text-dbs-faint uppercase tracking-wider mb-1">Total Assets</div>
-                  {Object.entries(totals).map(([ccy, val]) => (
-                    <div key={ccy} className="text-sm font-semibold font-mono text-dbs-text">{ccy} {val.toLocaleString()}</div>
-                  ))}
+          <>
+            {/* Mobile overlay */}
+            {showPortfolio && (
+              <div className="md:hidden fixed inset-0 z-40 flex justify-end">
+                <div className="absolute inset-0 bg-black/20" onClick={() => setShowPortfolio(false)} />
+                <div className="relative w-72 bg-white border-l border-dbs-border shadow-lg flex flex-col">
+                  <PortfolioSidebar currentUser={currentUser} onClose={() => setShowPortfolio(false)} />
                 </div>
-              )
-            })()}
-
-            {/* Transactions */}
-            <div className="flex-1 divide-y divide-dbs-border/40">
-              {currentUser.transactions.slice().reverse().map((tx, i) => {
-                const typeStyle = {
-                  BUY:    { bg: '#dcfce7', color: '#16a34a' },
-                  SELL:   { bg: '#fee2e2', color: '#dc2626' },
-                  SWAP:   { bg: '#dbeafe', color: '#2563eb' },
-                  YIELD:  { bg: '#fef9c3', color: '#a16207' },
-                  COUPON: { bg: '#fef9c3', color: '#a16207' },
-                }[tx.type] || { bg: '#f3f4f6', color: '#6b7280' }
-                return (
-                  <div key={i} className="px-4 py-3">
-                    <div className="flex items-center justify-between mb-1">
-                      <div className="flex items-center gap-1.5">
-                        <span
-                          className="text-[9px] font-bold px-1.5 py-0.5 rounded"
-                          style={{ backgroundColor: typeStyle.bg, color: typeStyle.color }}
-                        >
-                          {tx.type}
-                        </span>
-                        <span className="text-xs font-semibold text-dbs-text">{tx.asset}</span>
-                      </div>
-                      <span className="text-xs font-mono text-dbs-text">{tx.valueFmt}</span>
-                    </div>
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-2">
-                        {tx.amount > 0 && (
-                          <span className="text-[10px] text-dbs-muted font-mono">
-                            {tx.amount.toLocaleString()} {tx.asset.split('-')[0]}
-                          </span>
-                        )}
-                        {tx.note && (
-                          <span className="text-[10px] text-dbs-faint">{tx.note}</span>
-                        )}
-                      </div>
-                      <span className="text-[10px] text-dbs-faint">{tx.date}</span>
-                    </div>
-                  </div>
-                )
-              })}
+              </div>
+            )}
+            {/* Desktop permanent sidebar */}
+            <div className="hidden md:flex flex-col w-72 flex-shrink-0 border-l border-dbs-border bg-white overflow-y-auto">
+              <PortfolioSidebar currentUser={currentUser} onClose={null} />
             </div>
-          </div>
+          </>
         )}
 
       </div>
