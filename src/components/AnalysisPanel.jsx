@@ -162,12 +162,12 @@ RISKS:
   const sentimentColor = sentimentScore >= 70 ? '#15803d' : sentimentScore >= 55 ? '#16a34a' : sentimentScore >= 45 ? '#f59e0b' : sentimentScore >= 30 ? '#f97316' : '#DA291C'
 
   return (
-    <div className="bg-white border border-dbs-border rounded shadow-dbs overflow-hidden w-full">
+    <div className="bg-white border border-apa-border rounded shadow-apa overflow-hidden w-full">
       {/* Header */}
-      <div className="p-4 border-b border-dbs-border">
+      <div className="p-4 border-b border-apa-border">
         <div className="flex items-center justify-between">
           <div>
-            <div className="text-sm font-bold text-dbs-text">{product.name}</div>
+            <div className="text-sm font-bold text-apa-text">{product.name}</div>
             {aiSections ? (
               <div className={`mt-2 inline-flex items-center gap-2 px-3 py-1.5 rounded border text-xs font-bold ${sigCfg.bg} ${sigCfg.border} ${sigCfg.text}`}>
                 <span className={`w-2 h-2 rounded-full ${sigCfg.dot}`} />
@@ -176,14 +176,14 @@ RISKS:
                 {STRENGTH[aiSections.strength]}
               </div>
             ) : (
-              <div className="text-[10px] text-dbs-muted mt-1">Loading signal…</div>
+              <div className="text-[10px] text-apa-muted mt-1">Loading signal…</div>
             )}
           </div>
           <div className="text-right">
-            <div className="text-base font-mono font-bold text-dbs-text">
+            <div className="text-base font-mono font-bold text-apa-text">
               ${price?.toLocaleString('en-US', { minimumFractionDigits: 2 })}
             </div>
-            <div className={`text-xs font-semibold ${isUp ? 'text-green-600' : 'text-dbs-red'}`}>
+            <div className={`text-xs font-semibold ${isUp ? 'text-green-600' : 'text-apa-red'}`}>
               {isUp ? '▲' : '▼'} {Math.abs(change24h ?? 0).toFixed(2)}% 24h
             </div>
           </div>
@@ -191,12 +191,12 @@ RISKS:
       </div>
 
       {/* ── Tab bar ── */}
-      <div className="flex border-b border-dbs-border">
+      <div className="flex border-b border-apa-border">
         {TABS.map(t => (
           <button
             key={t.id}
             onClick={() => setTab(t.id)}
-            className={`flex-1 py-2.5 text-[11px] font-semibold transition-colors ${tab === t.id ? 'text-dbs-red border-b-2 border-dbs-red -mb-px bg-white' : 'text-dbs-muted hover:text-dbs-text'}`}
+            className={`flex-1 py-2.5 text-[11px] font-semibold transition-colors ${tab === t.id ? 'text-apa-red border-b-2 border-apa-red -mb-px bg-white' : 'text-apa-muted hover:text-apa-text'}`}
           >
             {t.label}
           </button>
@@ -207,13 +207,13 @@ RISKS:
       {tab === 'overview' && (
         <div>
           {/* Chart */}
-          <div className="p-4 border-b border-dbs-border">
+          <div className="p-4 border-b border-apa-border">
             <div className="flex items-center justify-between mb-2">
-              <span className="text-[10px] text-dbs-muted font-semibold uppercase tracking-wide">Price Chart</span>
+              <span className="text-[10px] text-apa-muted font-semibold uppercase tracking-wide">Price Chart</span>
               <div className="flex gap-1">
                 {RANGES.map(r => (
                   <button key={r.label} onClick={() => setRange(r.days)}
-                    className={`px-2 py-0.5 text-xs rounded font-medium transition-colors ${range === r.days ? 'bg-dbs-red text-white' : 'text-dbs-muted hover:text-dbs-text'}`}>
+                    className={`px-2 py-0.5 text-xs rounded font-medium transition-colors ${range === r.days ? 'bg-apa-red text-white' : 'text-apa-muted hover:text-apa-text'}`}>
                     {r.label}
                   </button>
                 ))}
@@ -221,7 +221,7 @@ RISKS:
             </div>
             {loading ? (
               <div className="h-32 flex items-center justify-center">
-                <div className="w-4 h-4 border-2 border-dbs-red border-t-transparent rounded-full animate-spin" />
+                <div className="w-4 h-4 border-2 border-apa-red border-t-transparent rounded-full animate-spin" />
               </div>
             ) : (
               <ResponsiveContainer width="100%" height={130}>
@@ -231,9 +231,9 @@ RISKS:
                   <YAxis tick={{ fontSize: 9, fill: '#909090' }} tickLine={false} axisLine={false} width={50}
                     tickFormatter={v => `$${v >= 1000 ? (v / 1000).toFixed(0) + 'k' : v.toFixed(0)}`} domain={['auto', 'auto']} />
                   <Tooltip content={({ active, payload, label }) => active && payload?.length ? (
-                    <div className="bg-white border border-dbs-border rounded px-2 py-1.5 text-xs shadow-dbs">
-                      <div className="text-dbs-muted">{label}</div>
-                      <div className="text-dbs-text font-mono font-semibold">${payload[0].value.toLocaleString()}</div>
+                    <div className="bg-white border border-apa-border rounded px-2 py-1.5 text-xs shadow-apa">
+                      <div className="text-apa-muted">{label}</div>
+                      <div className="text-apa-text font-mono font-semibold">${payload[0].value.toLocaleString()}</div>
                     </div>
                   ) : null} />
                   <Line type="monotone" dataKey="price" stroke={isUp ? '#16a34a' : '#DA291C'} strokeWidth={1.5} dot={false} activeDot={{ r: 3 }} />
@@ -244,11 +244,11 @@ RISKS:
 
           {/* AI Analysis */}
           <div className="p-4">
-            <div className="text-[10px] text-dbs-muted font-semibold uppercase tracking-wide mb-3">AI Analysis</div>
+            <div className="text-[10px] text-apa-muted font-semibold uppercase tracking-wide mb-3">AI Analysis</div>
             {loadingAI || !aiSections ? (
               <div className="space-y-2">
                 {[1, 0.85, 0.7, 1, 0.9, 0.6].map((w, i) => (
-                  <div key={i} className="h-2.5 bg-dbs-bg rounded animate-pulse" style={{ width: `${w * 100}%` }} />
+                  <div key={i} className="h-2.5 bg-apa-bg rounded animate-pulse" style={{ width: `${w * 100}%` }} />
                 ))}
               </div>
             ) : (
@@ -258,7 +258,7 @@ RISKS:
                 {aiSections.risks && <AISectionRow icon="⚠️" label="Key Risk" text={aiSections.risks} isRisk />}
               </div>
             )}
-            <p className="text-[9px] text-dbs-muted mt-3 leading-relaxed border-t border-dbs-border pt-3">
+            <p className="text-[9px] text-apa-muted mt-3 leading-relaxed border-t border-apa-border pt-3">
               For informational purposes only · Not financial advice · Capital at risk
             </p>
           </div>
@@ -270,7 +270,7 @@ RISKS:
         <div className="p-4 space-y-4">
           {/* Indicator grid */}
           <div>
-            <div className="text-[10px] text-dbs-muted font-semibold uppercase tracking-wide mb-2">Indicators</div>
+            <div className="text-[10px] text-apa-muted font-semibold uppercase tracking-wide mb-2">Indicators</div>
             <div className="grid grid-cols-2 gap-2">
               <IndicatorCard label="RSI (14)"
                 value={rsi ? rsi.toFixed(1) : '—'}
@@ -294,8 +294,8 @@ RISKS:
           {/* Fundamentals */}
           {details && (
             <div>
-              <div className="text-[10px] text-dbs-muted font-semibold uppercase tracking-wide mb-2">Fundamentals</div>
-              <div className="bg-dbs-bg border border-dbs-border rounded divide-y divide-dbs-border">
+              <div className="text-[10px] text-apa-muted font-semibold uppercase tracking-wide mb-2">Fundamentals</div>
+              <div className="bg-apa-bg border border-apa-border rounded divide-y divide-apa-border">
                 <FundRow label="Market Cap" value={`$${(details.marketCap / 1e9).toFixed(1)}B`} />
                 <FundRow label="24h Volume" value={`$${(details.volume24h / 1e9).toFixed(2)}B`} />
                 {details.circulatingSupply && <FundRow label="Circ. Supply" value={`${(details.circulatingSupply / 1e6).toFixed(2)}M ${product.symbol}`} />}
@@ -308,7 +308,7 @@ RISKS:
           {/* Fear & Greed */}
           {fearGreed && (
             <div>
-              <div className="text-[10px] text-dbs-muted font-semibold uppercase tracking-wide mb-2">Market Sentiment</div>
+              <div className="text-[10px] text-apa-muted font-semibold uppercase tracking-wide mb-2">Market Sentiment</div>
               <FearGreedBar value={fearGreed.value} label={fearGreed.label} />
             </div>
           )}
@@ -322,22 +322,22 @@ RISKS:
           {etfFlows && (
             <div>
               <div className="flex items-center justify-between mb-2">
-                <div className="text-[10px] text-dbs-muted font-semibold uppercase tracking-wide">Spot ETF Flows</div>
-                <span className="text-[9px] text-dbs-muted">Indicative</span>
+                <div className="text-[10px] text-apa-muted font-semibold uppercase tracking-wide">Spot ETF Flows</div>
+                <span className="text-[9px] text-apa-muted">Indicative</span>
               </div>
               <div className="flex gap-2 mb-3">
-                <div className="flex-1 bg-dbs-bg border border-dbs-border rounded p-2.5">
-                  <div className="text-[9px] text-dbs-muted">Total AUM</div>
-                  <div className="text-sm font-bold font-mono text-dbs-text">${etfTotalAum.toFixed(1)}B</div>
+                <div className="flex-1 bg-apa-bg border border-apa-border rounded p-2.5">
+                  <div className="text-[9px] text-apa-muted">Total AUM</div>
+                  <div className="text-sm font-bold font-mono text-apa-text">${etfTotalAum.toFixed(1)}B</div>
                 </div>
                 <div className={`flex-1 border rounded p-2.5 ${etfNetFlow >= 0 ? 'bg-green-50 border-green-200' : 'bg-red-50 border-red-200'}`}>
-                  <div className="text-[9px] text-dbs-muted">Net 24h Flow</div>
+                  <div className="text-[9px] text-apa-muted">Net 24h Flow</div>
                   <div className={`text-sm font-bold font-mono ${etfNetFlow >= 0 ? 'text-green-700' : 'text-red-700'}`}>
                     {etfNetFlow >= 0 ? '+' : ''}${etfNetFlow.toFixed(3)}B
                   </div>
                 </div>
               </div>
-              <div className="bg-dbs-bg border border-dbs-border rounded divide-y divide-dbs-border overflow-hidden">
+              <div className="bg-apa-bg border border-apa-border rounded divide-y divide-apa-border overflow-hidden">
                 {etfFlows.map(etf => (
                   <ETFRow key={etf.ticker} {...etf} maxAum={etfMaxAum} />
                 ))}
@@ -347,19 +347,19 @@ RISKS:
 
           {/* Social Sentiment */}
           <div>
-            <div className="text-[10px] text-dbs-muted font-semibold uppercase tracking-wide mb-2">Social Sentiment</div>
-            <div className="bg-dbs-bg border border-dbs-border rounded p-3 mb-2">
+            <div className="text-[10px] text-apa-muted font-semibold uppercase tracking-wide mb-2">Social Sentiment</div>
+            <div className="bg-apa-bg border border-apa-border rounded p-3 mb-2">
               <div className="flex items-center justify-between mb-1">
-                <span className="text-xs font-semibold text-dbs-text">{sentimentLabel}</span>
+                <span className="text-xs font-semibold text-apa-text">{sentimentLabel}</span>
                 <span className="text-xs font-mono font-bold" style={{ color: sentimentColor }}>{sentimentScore}/100</span>
               </div>
-              <div className="h-2 bg-dbs-border rounded-full overflow-hidden">
+              <div className="h-2 bg-apa-border rounded-full overflow-hidden">
                 <div className="h-full rounded-full transition-all" style={{ width: `${sentimentScore}%`, backgroundColor: sentimentColor }} />
               </div>
-              <div className="text-[9px] text-dbs-muted mt-1.5">Blended score: community votes + Fear & Greed index</div>
+              <div className="text-[9px] text-apa-muted mt-1.5">Blended score: community votes + Fear & Greed index</div>
             </div>
             {socialData && (
-              <div className="bg-dbs-bg border border-dbs-border rounded divide-y divide-dbs-border overflow-hidden">
+              <div className="bg-apa-bg border border-apa-border rounded divide-y divide-apa-border overflow-hidden">
                 {socialData.sentimentVotesUp != null && (
                   <FundRow label="Community Bullish" value={`${socialData.sentimentVotesUp?.toFixed(1)}%`} />
                 )}
@@ -387,11 +387,11 @@ RISKS:
 
 function AISectionRow({ icon, label, text, isRisk }) {
   return (
-    <div className={`flex gap-2.5 p-2.5 rounded border ${isRisk ? 'bg-red-50/50 border-red-100' : 'bg-dbs-bg border-dbs-border'}`}>
+    <div className={`flex gap-2.5 p-2.5 rounded border ${isRisk ? 'bg-red-50/50 border-red-100' : 'bg-apa-bg border-apa-border'}`}>
       <span className="text-base shrink-0 mt-px">{icon}</span>
       <div>
-        <div className={`text-[9px] font-bold uppercase tracking-wide mb-0.5 ${isRisk ? 'text-red-600' : 'text-dbs-muted'}`}>{label}</div>
-        <p className="text-[11px] text-dbs-text leading-relaxed">{text}</p>
+        <div className={`text-[9px] font-bold uppercase tracking-wide mb-0.5 ${isRisk ? 'text-red-600' : 'text-apa-muted'}`}>{label}</div>
+        <p className="text-[11px] text-apa-text leading-relaxed">{text}</p>
       </div>
     </div>
   )
@@ -399,10 +399,10 @@ function AISectionRow({ icon, label, text, isRisk }) {
 
 function IndicatorCard({ label, value, signal, color }) {
   return (
-    <div className="bg-dbs-bg border border-dbs-border rounded p-3 flex items-center justify-between">
+    <div className="bg-apa-bg border border-apa-border rounded p-3 flex items-center justify-between">
       <div>
-        <div className="text-[10px] text-dbs-muted font-semibold">{label}</div>
-        <div className="text-sm font-mono font-bold text-dbs-text mt-0.5">{value}</div>
+        <div className="text-[10px] text-apa-muted font-semibold">{label}</div>
+        <div className="text-sm font-mono font-bold text-apa-text mt-0.5">{value}</div>
       </div>
       <div className="text-right">
         <div className="text-xs font-bold" style={{ color }}>{signal}</div>
@@ -414,18 +414,18 @@ function IndicatorCard({ label, value, signal, color }) {
 function FearGreedBar({ value, label }) {
   const color = value < 25 ? '#DA291C' : value < 45 ? '#f97316' : value < 55 ? '#f59e0b' : value < 75 ? '#16a34a' : '#15803d'
   return (
-    <div className="bg-dbs-bg border border-dbs-border rounded p-3">
+    <div className="bg-apa-bg border border-apa-border rounded p-3">
       <div className="flex items-center justify-between mb-1.5">
-        <span className="text-xs font-semibold text-dbs-text">{label}</span>
+        <span className="text-xs font-semibold text-apa-text">{label}</span>
         <span className="text-xs font-mono font-bold" style={{ color }}>{value}/100</span>
       </div>
-      <div className="h-2 bg-dbs-border rounded-full overflow-hidden">
+      <div className="h-2 bg-apa-border rounded-full overflow-hidden">
         <div className="h-full rounded-full" style={{ width: `${value}%`, backgroundColor: color }} />
       </div>
       <div className="flex justify-between mt-1">
-        <span className="text-[9px] text-dbs-muted">Fear</span>
-        <span className="text-[9px] text-dbs-muted">Neutral</span>
-        <span className="text-[9px] text-dbs-muted">Greed</span>
+        <span className="text-[9px] text-apa-muted">Fear</span>
+        <span className="text-[9px] text-apa-muted">Neutral</span>
+        <span className="text-[9px] text-apa-muted">Greed</span>
       </div>
     </div>
   )
@@ -437,12 +437,12 @@ function ETFRow({ name, ticker, aum, flow24h, maxAum }) {
   return (
     <div className="flex items-center gap-3 px-3 py-2">
       <div className="w-12 shrink-0">
-        <div className="text-[10px] font-bold text-dbs-text">{ticker}</div>
-        <div className="text-[9px] text-dbs-muted">${aum.toFixed(1)}B</div>
+        <div className="text-[10px] font-bold text-apa-text">{ticker}</div>
+        <div className="text-[9px] text-apa-muted">${aum.toFixed(1)}B</div>
       </div>
       <div className="flex-1 min-w-0">
-        <div className="h-1.5 bg-dbs-border/50 rounded-full overflow-hidden">
-          <div className="h-full bg-dbs-red/60 rounded-full" style={{ width: `${barPct}%` }} />
+        <div className="h-1.5 bg-apa-border/50 rounded-full overflow-hidden">
+          <div className="h-full bg-apa-red/60 rounded-full" style={{ width: `${barPct}%` }} />
         </div>
       </div>
       <div className={`text-[10px] font-mono font-bold shrink-0 w-16 text-right ${isPos ? 'text-green-600' : 'text-red-600'}`}>
@@ -455,8 +455,8 @@ function ETFRow({ name, ticker, aum, flow24h, maxAum }) {
 function FundRow({ label, value }) {
   return (
     <div className="flex items-center justify-between px-3 py-2">
-      <span className="text-[10px] text-dbs-muted">{label}</span>
-      <span className="text-[10px] font-mono font-semibold text-dbs-text">{value}</span>
+      <span className="text-[10px] text-apa-muted">{label}</span>
+      <span className="text-[10px] font-mono font-semibold text-apa-text">{value}</span>
     </div>
   )
 }

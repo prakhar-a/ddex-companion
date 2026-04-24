@@ -44,14 +44,14 @@ html, body, #root {
 .live-dot { animation: pulse-dot 2s infinite; }
 
 /* APA dot-grid background for main content area */
-.dbs-dot-grid {
+.apa-dot-grid {
   background-color: #F4F7F8;
   background-image: radial-gradient(circle, #C5CDD2 1px, transparent 1px);
   background-size: 22px 22px;
 }
 
 /* APA heading style */
-.dbs-heading {
+.apa-heading {
   color: #1C2B33;
   font-weight: 700;
 }

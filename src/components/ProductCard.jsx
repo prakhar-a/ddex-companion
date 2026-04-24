@@ -29,7 +29,7 @@ export default function ProductCard({ product, priceData, compact = false }) {
   const riskColor = RISK_COLORS[product.risk] || '#f59e0b'
 
   return (
-    <div className="bg-white border border-dbs-border rounded shadow-dbs overflow-hidden hover:border-dbs-border-md transition-colors">
+    <div className="bg-white border border-apa-border rounded shadow-apa overflow-hidden hover:border-apa-border-md transition-colors">
       {/* Header */}
       <div className="p-4">
         <div className="flex items-start justify-between mb-3">
@@ -42,14 +42,14 @@ export default function ProductCard({ product, priceData, compact = false }) {
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <span className="text-sm font-semibold text-dbs-text">{product.name}</span>
+                <span className="text-sm font-semibold text-apa-text">{product.name}</span>
                 {product.badge && (
                   <span className={`text-[10px] px-1.5 py-0.5 rounded border font-mono font-semibold ${BADGE_STYLES[product.badge]}`}>
                     {product.badge}
                   </span>
                 )}
               </div>
-              <span className="text-xs text-dbs-muted">{product.category}</span>
+              <span className="text-xs text-apa-muted">{product.category}</span>
             </div>
           </div>
 
@@ -57,11 +57,11 @@ export default function ProductCard({ product, priceData, compact = false }) {
           <div className="text-right">
             {product.isCrypto ? (
               <>
-                <div className="text-sm font-mono font-semibold text-dbs-text">
+                <div className="text-sm font-mono font-semibold text-apa-text">
                   {formatPrice(price, product.currency, product.coingeckoId)}
                 </div>
                 {change24h !== undefined && (
-                  <div className={`flex items-center justify-end gap-0.5 text-xs font-medium ${isUp ? 'text-green-600' : 'text-dbs-red'}`}>
+                  <div className={`flex items-center justify-end gap-0.5 text-xs font-medium ${isUp ? 'text-green-600' : 'text-apa-red'}`}>
                     {isUp ? <TrendingUp size={10} /> : <TrendingDown size={10} />}
                     {isUp ? '+' : ''}{change24h?.toFixed(2)}%
                   </div>
@@ -70,42 +70,42 @@ export default function ProductCard({ product, priceData, compact = false }) {
             ) : product.yield ? (
               <div>
                 <div className="text-sm font-mono font-semibold text-green-600">{product.yield}</div>
-                <div className="text-xs text-dbs-muted">Current yield</div>
+                <div className="text-xs text-apa-muted">Current yield</div>
               </div>
             ) : product.coupon ? (
               <div>
                 <div className="text-sm font-mono font-semibold text-amber-600">{product.coupon}</div>
-                <div className="text-xs text-dbs-muted">Coupon p.a.</div>
+                <div className="text-xs text-apa-muted">Coupon p.a.</div>
               </div>
             ) : product.targetReturn ? (
               <div>
                 <div className="text-sm font-mono font-semibold text-purple-600">{product.targetReturn}</div>
-                <div className="text-xs text-dbs-muted">Target IRR</div>
+                <div className="text-xs text-apa-muted">Target IRR</div>
               </div>
             ) : null}
           </div>
         </div>
 
         {/* Key stats row */}
-        <div className="flex items-center gap-3 mt-3 pt-3 border-t border-dbs-border">
+        <div className="flex items-center gap-3 mt-3 pt-3 border-t border-apa-border">
           <div className="flex items-center gap-1">
-            <span className="text-xs text-dbs-muted">Min</span>
-            <span className="text-xs font-mono font-semibold text-dbs-text">
+            <span className="text-xs text-apa-muted">Min</span>
+            <span className="text-xs font-mono font-semibold text-apa-text">
               {product.currency === 'SGD' ? 'SGD' : '$'}{product.minInvestment.toLocaleString()}
             </span>
           </div>
           <div className="flex items-center gap-1">
             <div className="w-1.5 h-1.5 rounded-full" style={{ background: riskColor }} />
-            <span className="text-xs text-dbs-muted">{product.risk} risk</span>
+            <span className="text-xs text-apa-muted">{product.risk} risk</span>
           </div>
           {product.liquidity === 'Low' && (
             <div className="flex items-center gap-1">
-              <Lock size={10} className="text-dbs-muted" />
-              <span className="text-xs text-dbs-muted">Illiquid</span>
+              <Lock size={10} className="text-apa-muted" />
+              <span className="text-xs text-apa-muted">Illiquid</span>
             </div>
           )}
           <div className="ml-auto">
-            <span className="text-[10px] text-dbs-faint font-mono">{product.blockchain}</span>
+            <span className="text-[10px] text-apa-faint font-mono">{product.blockchain}</span>
           </div>
         </div>
       </div>
@@ -113,7 +113,7 @@ export default function ProductCard({ product, priceData, compact = false }) {
       {/* Expand toggle */}
       <button
         onClick={() => setExpanded(!expanded)}
-        className="w-full px-4 py-2 flex items-center justify-between text-xs text-dbs-muted hover:text-dbs-text border-t border-dbs-border hover:bg-dbs-bg transition-colors"
+        className="w-full px-4 py-2 flex items-center justify-between text-xs text-apa-muted hover:text-apa-text border-t border-apa-border hover:bg-apa-bg transition-colors"
       >
         <span>{expanded ? 'Less detail' : 'More detail'}</span>
         {expanded ? <ChevronUp size={12} /> : <ChevronDown size={12} />}
@@ -121,59 +121,59 @@ export default function ProductCard({ product, priceData, compact = false }) {
 
       {/* Expanded detail */}
       {expanded && (
-        <div className="px-4 pb-4 space-y-3 border-t border-dbs-border pt-3">
+        <div className="px-4 pb-4 space-y-3 border-t border-apa-border pt-3">
           {!compact && (
             <PriceChart product={product} height={110} showRangeSelector={true} />
           )}
-          <p className="text-xs text-dbs-muted leading-relaxed">{product.description}</p>
+          <p className="text-xs text-apa-muted leading-relaxed">{product.description}</p>
 
           <div className="grid grid-cols-2 gap-2">
             {product.tenor && (
               <div>
-                <div className="text-[10px] text-dbs-muted uppercase tracking-wide mb-0.5">Tenor</div>
-                <div className="text-xs text-dbs-text font-medium">{product.tenor}</div>
+                <div className="text-[10px] text-apa-muted uppercase tracking-wide mb-0.5">Tenor</div>
+                <div className="text-xs text-apa-text font-medium">{product.tenor}</div>
               </div>
             )}
             {product.rating && (
               <div>
-                <div className="text-[10px] text-dbs-muted uppercase tracking-wide mb-0.5">Rating</div>
+                <div className="text-[10px] text-apa-muted uppercase tracking-wide mb-0.5">Rating</div>
                 <div className="text-xs text-green-700 font-mono font-semibold">{product.rating}</div>
               </div>
             )}
             {product.issuedBy && (
               <div>
-                <div className="text-[10px] text-dbs-muted uppercase tracking-wide mb-0.5">Issuer</div>
-                <div className="text-xs text-dbs-text font-medium">{product.issuedBy}</div>
+                <div className="text-[10px] text-apa-muted uppercase tracking-wide mb-0.5">Issuer</div>
+                <div className="text-xs text-apa-text font-medium">{product.issuedBy}</div>
               </div>
             )}
             {product.settlementCycle && (
               <div>
-                <div className="text-[10px] text-dbs-muted uppercase tracking-wide mb-0.5">Settlement</div>
-                <div className="text-xs text-dbs-text font-medium">{product.settlementCycle}</div>
+                <div className="text-[10px] text-apa-muted uppercase tracking-wide mb-0.5">Settlement</div>
+                <div className="text-xs text-apa-text font-medium">{product.settlementCycle}</div>
               </div>
             )}
             {product.geography && (
               <div>
-                <div className="text-[10px] text-dbs-muted uppercase tracking-wide mb-0.5">Geography</div>
-                <div className="text-xs text-dbs-text font-medium">{product.geography}</div>
+                <div className="text-[10px] text-apa-muted uppercase tracking-wide mb-0.5">Geography</div>
+                <div className="text-xs text-apa-text font-medium">{product.geography}</div>
               </div>
             )}
             {product.underlyingFund && (
               <div className="col-span-2">
-                <div className="text-[10px] text-dbs-muted uppercase tracking-wide mb-0.5">Underlying Fund</div>
-                <div className="text-xs text-dbs-text font-medium">{product.underlyingFund}</div>
+                <div className="text-[10px] text-apa-muted uppercase tracking-wide mb-0.5">Underlying Fund</div>
+                <div className="text-xs text-apa-text font-medium">{product.underlyingFund}</div>
               </div>
             )}
           </div>
 
           {product.structure && (
-            <div className="bg-dbs-bg border border-dbs-border rounded p-2.5">
-              <div className="text-[10px] text-dbs-muted uppercase tracking-wide mb-1">Structure</div>
-              <div className="text-xs text-dbs-text">{product.structure}</div>
+            <div className="bg-apa-bg border border-apa-border rounded p-2.5">
+              <div className="text-[10px] text-apa-muted uppercase tracking-wide mb-1">Structure</div>
+              <div className="text-xs text-apa-text">{product.structure}</div>
             </div>
           )}
 
-          <button className="w-full py-2 bg-dbs-red hover:bg-dbs-red-dark text-white text-xs font-semibold rounded transition-colors">
+          <button className="w-full py-2 bg-apa-red hover:bg-apa-red-dark text-white text-xs font-semibold rounded transition-colors">
             Speak to your RM →
           </button>
         </div>

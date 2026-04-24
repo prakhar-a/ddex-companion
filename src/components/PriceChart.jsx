@@ -11,9 +11,9 @@ const RANGES = [
 const CustomTooltip = ({ active, payload, label, currency = 'USD' }) => {
   if (active && payload?.length) {
     return (
-      <div className="bg-white border border-dbs-border rounded px-3 py-2 text-xs shadow-dbs">
-        <p className="text-dbs-muted mb-1">{label}</p>
-        <p className="text-dbs-text font-semibold font-mono">
+      <div className="bg-white border border-apa-border rounded px-3 py-2 text-xs shadow-apa">
+        <p className="text-apa-muted mb-1">{label}</p>
+        <p className="text-apa-text font-semibold font-mono">
           {currency === 'SGD' ? 'SGD ' : '$ '}
           {payload[0].value.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: payload[0].value < 10 ? 4 : 2 })}
         </p>
@@ -65,10 +65,10 @@ export default function PriceChart({ product, height = 160, showRangeSelector = 
       {showRangeSelector && (
         <div className="flex items-center justify-between mb-3">
           <div className="flex items-center gap-2">
-            <span className={`text-sm font-semibold ${isUp ? 'text-green-600' : 'text-dbs-red'}`}>
+            <span className={`text-sm font-semibold ${isUp ? 'text-green-600' : 'text-apa-red'}`}>
               {isUp ? '+' : ''}{change.toFixed(2)}%
             </span>
-            <span className="text-xs text-dbs-muted">{RANGES.find(r => r.days === range)?.label}</span>
+            <span className="text-xs text-apa-muted">{RANGES.find(r => r.days === range)?.label}</span>
           </div>
           <div className="flex gap-1">
             {RANGES.map(r => (
@@ -77,8 +77,8 @@ export default function PriceChart({ product, height = 160, showRangeSelector = 
                 onClick={() => setRange(r.days)}
                 className={`px-2 py-0.5 text-xs rounded transition-colors font-medium ${
                   range === r.days
-                    ? 'bg-dbs-red text-white'
-                    : 'text-dbs-muted hover:text-dbs-text'
+                    ? 'bg-apa-red text-white'
+                    : 'text-apa-muted hover:text-apa-text'
                 }`}
               >
                 {r.label}
@@ -90,7 +90,7 @@ export default function PriceChart({ product, height = 160, showRangeSelector = 
 
       {loading ? (
         <div style={{ height }} className="flex items-center justify-center">
-          <div className="w-4 h-4 border-2 border-dbs-red border-t-transparent rounded-full animate-spin" />
+          <div className="w-4 h-4 border-2 border-apa-red border-t-transparent rounded-full animate-spin" />
         </div>
       ) : (
         <ResponsiveContainer width="100%" height={height}>

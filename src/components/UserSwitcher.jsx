@@ -39,8 +39,8 @@ export default function UserSwitcher({ currentUser, onSwitch }) {
       {/* Trigger button */}
       <button
         onClick={() => setOpen(o => !o)}
-        className={`flex items-center gap-2 pl-1 pr-2.5 py-1 bg-white border rounded-full shadow-dbs transition-all hover:shadow-md ${
-          open ? 'border-dbs-red' : 'border-dbs-border'
+        className={`flex items-center gap-2 pl-1 pr-2.5 py-1 bg-white border rounded-full shadow-apa transition-all hover:shadow-md ${
+          open ? 'border-apa-red' : 'border-apa-border'
         }`}
       >
         <div
@@ -50,19 +50,19 @@ export default function UserSwitcher({ currentUser, onSwitch }) {
           {currentUser.initials}
         </div>
         <div className="hidden sm:block text-left">
-          <div className="text-[11px] font-semibold text-dbs-text leading-none">{currentUser.name}</div>
-          <div className="text-[10px] text-dbs-muted leading-none mt-0.5">{currentUser.role}</div>
+          <div className="text-[11px] font-semibold text-apa-text leading-none">{currentUser.name}</div>
+          <div className="text-[10px] text-apa-muted leading-none mt-0.5">{currentUser.role}</div>
         </div>
-        <ChevronDown size={11} className={`text-dbs-faint transition-transform ${open ? 'rotate-180' : ''}`} />
+        <ChevronDown size={11} className={`text-apa-faint transition-transform ${open ? 'rotate-180' : ''}`} />
       </button>
 
       {/* Dropdown panel — opens downward from header */}
       {open && (
-        <div className="absolute right-0 top-full mt-2 w-72 max-w-[calc(100vw-2rem)] bg-white border border-dbs-border rounded shadow-lg overflow-hidden z-50">
+        <div className="absolute right-0 top-full mt-2 w-72 max-w-[calc(100vw-2rem)] bg-white border border-apa-border rounded shadow-lg overflow-hidden z-50">
 
           {/* Header */}
-          <div className="px-4 py-3 border-b border-dbs-border bg-dbs-bg">
-            <div className="text-[10px] text-dbs-muted uppercase tracking-wider font-semibold">Switch User</div>
+          <div className="px-4 py-3 border-b border-apa-border bg-apa-bg">
+            <div className="text-[10px] text-apa-muted uppercase tracking-wider font-semibold">Switch User</div>
           </div>
 
           {/* User list */}
@@ -74,7 +74,7 @@ export default function UserSwitcher({ currentUser, onSwitch }) {
                   key={user.id}
                   onClick={() => handleSelect(user)}
                   className={`w-full flex items-center gap-3 px-4 py-2.5 text-left transition-colors ${
-                    isActive ? 'bg-dbs-red-light' : 'hover:bg-dbs-bg'
+                    isActive ? 'bg-apa-red-light' : 'hover:bg-apa-bg'
                   }`}
                 >
                   <div
@@ -86,24 +86,24 @@ export default function UserSwitcher({ currentUser, onSwitch }) {
 
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2">
-                      <span className={`text-sm font-medium ${isActive ? 'text-dbs-red' : 'text-dbs-text'}`}>
+                      <span className={`text-sm font-medium ${isActive ? 'text-apa-red' : 'text-apa-text'}`}>
                         {user.name}
                       </span>
                       {isActive && (
-                        <span className="text-[9px] px-1.5 py-0.5 bg-dbs-red text-white rounded font-semibold">
+                        <span className="text-[9px] px-1.5 py-0.5 bg-apa-red text-white rounded font-semibold">
                           ACTIVE
                         </span>
                       )}
                     </div>
-                    <div className="text-[11px] text-dbs-muted">{user.role}</div>
+                    <div className="text-[11px] text-apa-muted">{user.role}</div>
                   </div>
 
                   {user.transactions.length > 0 ? (
-                    <span className="text-[10px] text-dbs-muted bg-dbs-bg px-2 py-0.5 rounded font-mono">
+                    <span className="text-[10px] text-apa-muted bg-apa-bg px-2 py-0.5 rounded font-mono">
                       {user.transactions.length} tx
                     </span>
                   ) : (
-                    <span className="text-[10px] text-dbs-faint italic">New</span>
+                    <span className="text-[10px] text-apa-faint italic">New</span>
                   )}
                 </button>
               )
@@ -113,24 +113,24 @@ export default function UserSwitcher({ currentUser, onSwitch }) {
           {/* Transaction history for active user */}
           {currentUser.transactions.length > 0 && (
             <>
-              <div className="border-t border-dbs-border">
+              <div className="border-t border-apa-border">
                 <button
                   onClick={() => setShowHistory(h => !h)}
-                  className="w-full flex items-center justify-between px-4 py-2.5 text-[11px] text-dbs-muted hover:bg-dbs-bg transition-colors"
+                  className="w-full flex items-center justify-between px-4 py-2.5 text-[11px] text-apa-muted hover:bg-apa-bg transition-colors"
                 >
                   <span className="font-semibold uppercase tracking-wider">
                     {currentUser.name.split(' ')[0]}'s Transaction History
                   </span>
-                  <span className="text-dbs-faint">{showHistory ? '▲' : '▼'}</span>
+                  <span className="text-apa-faint">{showHistory ? '▲' : '▼'}</span>
                 </button>
               </div>
 
               {showHistory && (
-                <div className="border-t border-dbs-border max-h-52 overflow-y-auto">
+                <div className="border-t border-apa-border max-h-52 overflow-y-auto">
                   {currentUser.transactions.map((tx, i) => {
                     const style = TYPE_COLORS[tx.type] || { bg: '#f3f4f6', text: '#6b7280' }
                     return (
-                      <div key={i} className="flex items-center gap-3 px-4 py-2 border-b border-dbs-border/50 last:border-0">
+                      <div key={i} className="flex items-center gap-3 px-4 py-2 border-b border-apa-border/50 last:border-0">
                         <span
                           className="text-[9px] font-bold px-1.5 py-0.5 rounded flex-shrink-0"
                           style={{ backgroundColor: style.bg, color: style.text }}
@@ -138,19 +138,19 @@ export default function UserSwitcher({ currentUser, onSwitch }) {
                           {tx.type}
                         </span>
                         <div className="flex-1 min-w-0">
-                          <div className="text-[11px] font-semibold text-dbs-text">
+                          <div className="text-[11px] font-semibold text-apa-text">
                             {tx.asset}
                             {tx.amount > 0 && (
-                              <span className="text-dbs-muted font-normal"> · {tx.amount.toLocaleString()}</span>
+                              <span className="text-apa-muted font-normal"> · {tx.amount.toLocaleString()}</span>
                             )}
                           </div>
                           {tx.note && (
-                            <div className="text-[10px] text-dbs-faint">{tx.note}</div>
+                            <div className="text-[10px] text-apa-faint">{tx.note}</div>
                           )}
                         </div>
                         <div className="text-right flex-shrink-0">
-                          <div className="text-[11px] font-mono text-dbs-text">{tx.valueFmt}</div>
-                          <div className="text-[10px] text-dbs-faint">{tx.date}</div>
+                          <div className="text-[11px] font-mono text-apa-text">{tx.valueFmt}</div>
+                          <div className="text-[10px] text-apa-faint">{tx.date}</div>
                         </div>
                       </div>
                     )
