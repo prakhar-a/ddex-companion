@@ -256,24 +256,33 @@ function LiveTicker({ prices }) {
   )
 }
 
-function DbsLogo() {
+function ApaLogo() {
   return (
     <div className="flex items-center gap-3">
-      {/* DBS Spark icon — accurate pincushion shape matching official DBS logo */}
-      <svg width="40" height="40" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-        {/* Pincushion: 8 smooth cubic bezier segments, outward lobes at N/E/S/W, concave pinch at diagonals */}
-        <path
-          d="M50,6 C62,6 80,20 80,32 C80,44 94,44 94,50 C94,56 80,56 80,68 C80,80 62,94 50,94 C38,94 20,80 20,68 C20,56 6,56 6,50 C6,44 20,44 20,32 C20,20 38,6 50,6 Z"
-          fill="#DA291C"
-        />
-        {/* White X — 4 tapered arms pointing to diagonal corners */}
-        <path
-          d="M50,44 L78,16 L84,22 L56,50 L84,78 L78,84 L50,56 L22,84 L16,78 L44,50 L16,22 L22,16 Z"
-          fill="white"
-        />
-      </svg>
-      {/* DBS wordmark */}
-      <span style={{ fontFamily: 'Georgia, "Times New Roman", serif', fontSize: '26px', fontWeight: '900', color: '#0a0a0a', letterSpacing: '-1px', lineHeight: 1 }}>DBS</span>
+      {/* APA monogram on steel-blue tile */}
+      <div
+        style={{ width: 40, height: 40, background: '#6B8B9A', borderRadius: 4, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}
+      >
+        <svg width="36" height="28" viewBox="0 0 90 70" fill="none" xmlns="http://www.w3.org/2000/svg">
+          {/* A */}
+          <path d="M0 62 L14 8 L20 8 L34 62 L28 62 L24 46 L10 46 L6 62 Z M12 40 L22 40 L17 18 Z" fill="white" />
+          {/* P */}
+          <path d="M38 8 L38 62 L44 62 L44 38 L54 38 C62 38 67 33 67 25 C67 16 62 8 54 8 Z M44 14 L53 14 C58 14 61 18 61 25 C61 32 58 32 53 32 L44 32 Z" fill="white" />
+          {/* A */}
+          <path d="M56 62 L70 8 L76 8 L90 62 L84 62 L80 46 L66 46 L62 62 Z M68 40 L78 40 L73 18 Z" fill="white" />
+          {/* Decorative swoosh under P */}
+          <path d="M44 50 Q56 56 67 50" stroke="white" strokeWidth="1.5" fill="none" strokeLinecap="round" opacity="0.6" />
+        </svg>
+      </div>
+      {/* APA wordmark */}
+      <div>
+        <div style={{ fontFamily: '"Cormorant Garamond", Georgia, serif', fontSize: '18px', fontWeight: '700', color: '#1C2B33', letterSpacing: '0.5px', lineHeight: 1.1 }}>
+          Atlantic Partners Asia
+        </div>
+        <div style={{ fontFamily: 'Open Sans, sans-serif', fontSize: '9px', fontWeight: '500', color: '#718794', letterSpacing: '1.5px', textTransform: 'uppercase', lineHeight: 1, marginTop: '1px' }}>
+          Digital Exchange
+        </div>
+      </div>
     </div>
   )
 }
@@ -474,22 +483,22 @@ export default function App() {
     <div className="flex flex-col h-screen bg-dbs-bg overflow-hidden">
 
       {/* ── Top accent bar ── */}
-      <div className="flex-shrink-0 h-[3px] bg-dbs-red" />
+      <div className="flex-shrink-0 h-[3px]" style={{ background: 'linear-gradient(90deg, #6B8B9A 0%, #8AAAB8 50%, #6B8B9A 100%)' }} />
 
       {/* ── Header ── */}
       <header className="flex-shrink-0 bg-white border-b border-dbs-border px-5 py-3 flex items-center justify-between shadow-dbs-md">
         <div className="flex items-center gap-3">
           {/* Logo */}
-          <DbsLogo />
+          <ApaLogo />
           <div className="w-px h-6 bg-dbs-border" />
           <div>
             <div className="flex items-center gap-1.5">
-              <span className="text-sm font-semibold text-dbs-text">DDEx</span>
+              <span className="text-sm font-semibold text-dbs-text" style={{ fontFamily: '"Cormorant Garamond", Georgia, serif', fontSize: '15px', letterSpacing: '0.3px' }}>APA</span>
               <span className="text-[10px] px-1.5 py-0.5 bg-dbs-red-light text-dbs-red rounded font-mono border border-dbs-red/20 font-semibold">
                 AI
               </span>
             </div>
-            <div className="text-[10px] text-dbs-muted -mt-0.5">Digital Exchange Companion</div>
+            <div className="text-[10px] text-dbs-muted -mt-0.5" style={{ letterSpacing: '0.5px' }}>AI Companion</div>
           </div>
 
         </div>
@@ -552,7 +561,7 @@ export default function App() {
             <div className="flex items-center justify-between px-5 py-4 border-b border-dbs-border">
               <div className="flex items-center gap-2">
                 <div className="w-1 h-4 bg-dbs-red rounded-full" />
-                <span className="text-sm font-semibold text-dbs-text">About DBS Digital Exchange</span>
+                <span className="text-sm font-semibold text-dbs-text">About Atlantic Partners Asia</span>
               </div>
               <button onClick={() => setShowInfo(false)} className="text-dbs-muted hover:text-dbs-text">
                 <X size={16} />
@@ -560,7 +569,7 @@ export default function App() {
             </div>
             <div className="p-5 space-y-5 flex-1">
               <p className="text-sm text-dbs-muted leading-relaxed">
-                DBS Digital Exchange (DDEx) is an institutional-grade platform to <strong className="text-dbs-text">tokenise, trade and custody digital assets</strong>. Built on the trust and infrastructure of DBS Bank, DDEx enables accredited and institutional investors to access fully regulated digital asset services — from cryptocurrency trading to security token offerings.
+                Atlantic Partners Asia (APA) is a leading cross-border financial services firm specialising in <strong className="text-dbs-text">digital assets, structured products and capital markets</strong>. APA connects institutional investors across Asia with world-class investment opportunities — from digital asset strategies to tokenised securities and structured notes.
               </p>
               <div className="grid grid-cols-3 gap-3">
                 {[
@@ -624,16 +633,20 @@ export default function App() {
             /* Landing */
             <div className="relative max-w-2xl mx-auto px-4 py-14">
               {/* Radial gradient overlay */}
-              <div className="absolute inset-x-0 top-0 h-80 pointer-events-none" style={{ background: 'radial-gradient(ellipse at 50% 0%, rgba(218,41,28,0.06) 0%, transparent 65%)' }} />
+              <div className="absolute inset-x-0 top-0 h-80 pointer-events-none" style={{ background: 'radial-gradient(ellipse at 50% 0%, rgba(107,139,154,0.08) 0%, transparent 65%)' }} />
 
               {/* Hero — centered */}
               <div className="relative text-center mb-10">
-                <div className="w-20 h-20 bg-dbs-red rounded-xl flex items-center justify-center mx-auto mb-5 shadow-dbs-md">
-                  <span className="text-white text-3xl font-bold tracking-tight">D</span>
+                <div className="w-20 h-20 rounded-xl flex items-center justify-center mx-auto mb-5 shadow-dbs-md" style={{ background: '#6B8B9A' }}>
+                  <svg width="48" height="36" viewBox="0 0 90 70" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M0 62 L14 8 L20 8 L34 62 L28 62 L24 46 L10 46 L6 62 Z M12 40 L22 40 L17 18 Z" fill="white" />
+                    <path d="M38 8 L38 62 L44 62 L44 38 L54 38 C62 38 67 33 67 25 C67 16 62 8 54 8 Z M44 14 L53 14 C58 14 61 18 61 25 C61 32 58 32 53 32 L44 32 Z" fill="white" />
+                    <path d="M56 62 L70 8 L76 8 L90 62 L84 62 L80 46 L66 46 L62 62 Z M68 40 L78 40 L73 18 Z" fill="white" />
+                  </svg>
                 </div>
-                <h1 className="text-3xl font-bold text-dbs-text mb-2 tracking-tight">
+                <h1 className="text-3xl font-bold text-dbs-text mb-2 tracking-tight" style={{ fontFamily: '"Cormorant Garamond", Georgia, serif', fontWeight: 600 }}>
                   {currentUser.id === 'new'
-                    ? 'Welcome to DDEx AI Companion'
+                    ? 'Welcome to APA AI Companion'
                     : `Welcome back, ${currentUser.name.split(' ')[0]}`}
                 </h1>
                 <div className="w-12 h-0.5 bg-dbs-red mx-auto mb-3" />

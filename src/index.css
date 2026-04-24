@@ -10,15 +10,15 @@ html, body, #root {
   height: 100%;
   margin: 0;
   padding: 0;
-  background: #F7F7F7;
-  color: #2E2E2E;
+  background: #F4F7F8;
+  color: #1C2B33;
   font-family: 'Open Sans', sans-serif;
 }
 
 /* Scrollbar */
 ::-webkit-scrollbar { width: 4px; }
 ::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: #DCDCDC; border-radius: 2px; }
+::-webkit-scrollbar-thumb { background: #C5CDD2; border-radius: 2px; }
 
 /* Chat message animation */
 @keyframes fadeSlideUp {
@@ -43,15 +43,15 @@ html, body, #root {
 }
 .live-dot { animation: pulse-dot 2s infinite; }
 
-/* DBS dot-grid background for main content area */
+/* APA dot-grid background for main content area */
 .dbs-dot-grid {
-  background-color: #F4F4F4;
-  background-image: radial-gradient(circle, #C8C8C8 1px, transparent 1px);
+  background-color: #F4F7F8;
+  background-image: radial-gradient(circle, #C5CDD2 1px, transparent 1px);
   background-size: 22px 22px;
 }
 
-/* DBS red underline accent for headings */
+/* APA heading style */
 .dbs-heading {
-  color: #2E2E2E;
+  color: #1C2B33;
   font-weight: 700;
 }
