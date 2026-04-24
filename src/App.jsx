@@ -166,7 +166,7 @@ function FormattedText({ text }) {
     <span>
       {parts.map((part, i) =>
         part.startsWith('**') && part.endsWith('**')
-          ? <strong key={i} className="text-dbs-red font-semibold">{part.slice(2, -2)}</strong>
+          ? <strong key={i} className="font-semibold text-dbs-text">{part.slice(2, -2)}</strong>
           : <span key={i}>{part}</span>
       )}
     </span>
