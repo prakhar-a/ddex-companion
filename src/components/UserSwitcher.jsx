@@ -58,7 +58,7 @@ export default function UserSwitcher({ currentUser, onSwitch }) {
 
       {/* Dropdown panel — opens downward from header */}
       {open && (
-        <div className="absolute right-0 top-full mt-2 w-72 bg-white border border-dbs-border rounded shadow-lg overflow-hidden z-50">
+        <div className="absolute right-0 top-full mt-2 w-72 max-w-[calc(100vw-2rem)] bg-white border border-dbs-border rounded shadow-lg overflow-hidden z-50">
 
           {/* Header */}
           <div className="px-4 py-3 border-b border-dbs-border bg-dbs-bg">
