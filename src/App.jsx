@@ -164,7 +164,7 @@ function FormattedText({ text }) {
     <span>
       {parts.map((part, i) =>
         part.startsWith('**') && part.endsWith('**')
-          ? <strong key={i} className="text-dbs-red font-semibold">{part.slice(2, -2)}</strong>
+          ? <strong key={i} className="font-semibold text-apa-text">{part.slice(2, -2)}</strong>
           : <span key={i}>{part}</span>
       )}
     </span>
@@ -176,7 +176,7 @@ function MessageBubble({ msg, priceData, currentUser, onAppendMessage }) {
   return (
     <div className={`msg-enter flex ${isUser ? 'justify-end' : 'justify-start'} mb-4`}>
       {!isUser && (
-        <div className="w-7 h-7 rounded flex items-center justify-center flex-shrink-0 mr-2.5 mt-0.5 bg-dbs-red">
+        <div className="w-7 h-7 rounded flex items-center justify-center flex-shrink-0 mr-2.5 mt-0.5 bg-apa-red">
           <span className="text-white text-[10px] font-bold">AI</span>
         </div>
       )}
@@ -184,8 +184,8 @@ function MessageBubble({ msg, priceData, currentUser, onAppendMessage }) {
         <div
           className={`rounded px-4 py-3 text-sm leading-relaxed ${
             isUser
-              ? 'bg-dbs-red text-white rounded-tr-sm ml-auto w-fit'
-              : 'bg-white text-dbs-text rounded-tl-sm border border-dbs-border border-l-2 border-l-dbs-red shadow-dbs'
+              ? 'bg-apa-red text-white rounded-tr-sm ml-auto w-fit'
+              : 'bg-white text-apa-text rounded-tl-sm border border-apa-border border-l-2 border-l-apa-red shadow-apa'
           }`}
         >
           {msg.content.split('\n').map((line, i, arr) => (
@@ -210,14 +210,14 @@ function MessageBubble({ msg, priceData, currentUser, onAppendMessage }) {
 function TypingIndicator() {
   return (
     <div className="msg-enter flex justify-start mb-4">
-      <div className="w-7 h-7 rounded flex items-center justify-center flex-shrink-0 mr-2.5 bg-dbs-red">
+      <div className="w-7 h-7 rounded flex items-center justify-center flex-shrink-0 mr-2.5 bg-apa-red">
         <span className="text-white text-[10px] font-bold">AI</span>
       </div>
-      <div className="bg-white border border-dbs-border rounded rounded-tl-sm px-4 py-3.5 shadow-dbs">
+      <div className="bg-white border border-apa-border rounded rounded-tl-sm px-4 py-3.5 shadow-apa">
         <div className="flex gap-1 items-center h-4">
-          <div className="dot w-1.5 h-1.5 rounded-full bg-dbs-muted" />
-          <div className="dot w-1.5 h-1.5 rounded-full bg-dbs-muted" />
-          <div className="dot w-1.5 h-1.5 rounded-full bg-dbs-muted" />
+          <div className="dot w-1.5 h-1.5 rounded-full bg-apa-muted" />
+          <div className="dot w-1.5 h-1.5 rounded-full bg-apa-muted" />
+          <div className="dot w-1.5 h-1.5 rounded-full bg-apa-muted" />
         </div>
       </div>
     </div>
@@ -238,13 +238,13 @@ function LiveTicker({ prices }) {
         const isUp = p.usd_24h_change >= 0
         return (
           <div key={id} className="flex items-center gap-1.5">
-            <span className="text-[10px] text-dbs-muted font-mono uppercase tracking-wide">{sym}</span>
-            <span className="text-xs font-mono text-dbs-text font-semibold">
+            <span className="text-[10px] text-apa-muted font-mono uppercase tracking-wide">{sym}</span>
+            <span className="text-xs font-mono text-apa-text font-semibold">
               ${p.usd >= 1
                 ? p.usd.toLocaleString('en-US', { maximumFractionDigits: p.usd < 10 ? 4 : 0 })
                 : p.usd.toFixed(4)}
             </span>
-            <span className={`text-[10px] font-mono font-medium ${isUp ? 'text-green-600' : 'text-dbs-red'}`}>
+            <span className={`text-[10px] font-mono font-medium ${isUp ? 'text-green-600' : 'text-apa-red'}`}>
               {isUp ? '+' : ''}{p.usd_24h_change.toFixed(2)}%
             </span>
           </div>
@@ -254,24 +254,29 @@ function LiveTicker({ prices }) {
   )
 }
 
-function DbsLogo() {
+function ApaLogo() {
   return (
     <div className="flex items-center gap-2 sm:gap-3">
-      {/* DBS Spark icon — accurate pincushion shape matching official DBS logo */}
-      <svg className="w-8 h-8 sm:w-10 sm:h-10 flex-shrink-0" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-        {/* Pincushion: 8 smooth cubic bezier segments, outward lobes at N/E/S/W, concave pinch at diagonals */}
-        <path
-          d="M50,6 C62,6 80,20 80,32 C80,44 94,44 94,50 C94,56 80,56 80,68 C80,80 62,94 50,94 C38,94 20,80 20,68 C20,56 6,56 6,50 C6,44 20,44 20,32 C20,20 38,6 50,6 Z"
-          fill="#DA291C"
-        />
-        {/* White X — 4 tapered arms pointing to diagonal corners */}
-        <path
-          d="M50,44 L78,16 L84,22 L56,50 L84,78 L78,84 L50,56 L22,84 L16,78 L44,50 L16,22 L22,16 Z"
-          fill="white"
-        />
-      </svg>
-      {/* DBS wordmark — hidden on small screens */}
-      <span className="hidden sm:inline" style={{ fontFamily: 'Georgia, "Times New Roman", serif', fontSize: '26px', fontWeight: '900', color: '#0a0a0a', letterSpacing: '-1px', lineHeight: 1 }}>DBS</span>
+      {/* APA monogram on steel-blue tile */}
+      <div
+        style={{ width: 40, height: 40, background: '#6B8B9A', borderRadius: 4, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}
+      >
+        <svg width="36" height="28" viewBox="0 0 90 70" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M0 62 L14 8 L20 8 L34 62 L28 62 L24 46 L10 46 L6 62 Z M12 40 L22 40 L17 18 Z" fill="white" />
+          <path d="M38 8 L38 62 L44 62 L44 38 L54 38 C62 38 67 33 67 25 C67 16 62 8 54 8 Z M44 14 L53 14 C58 14 61 18 61 25 C61 32 58 32 53 32 L44 32 Z" fill="white" />
+          <path d="M56 62 L70 8 L76 8 L90 62 L84 62 L80 46 L66 46 L62 62 Z M68 40 L78 40 L73 18 Z" fill="white" />
+          <path d="M44 50 Q56 56 67 50" stroke="white" strokeWidth="1.5" fill="none" strokeLinecap="round" opacity="0.6" />
+        </svg>
+      </div>
+      {/* APA wordmark — hidden on small screens */}
+      <div className="hidden sm:block">
+        <div style={{ fontFamily: '"Cormorant Garamond", Georgia, serif', fontSize: '18px', fontWeight: '700', color: '#1C2B33', letterSpacing: '0.5px', lineHeight: 1.1 }}>
+          Atlantic Partners Asia
+        </div>
+        <div style={{ fontFamily: 'Open Sans, sans-serif', fontSize: '9px', fontWeight: '500', color: '#718794', letterSpacing: '1.5px', textTransform: 'uppercase', lineHeight: 1, marginTop: '1px' }}>
+          Digital Exchange
+        </div>
+      </div>
     </div>
   )
 }
@@ -287,16 +292,16 @@ function HistorySidebar({ sessions, currentId, onLoad, onDelete, onClose }) {
         onClick={onClose}
       />
       {/* Panel */}
-      <div className="fixed top-0 left-0 h-full w-72 bg-white border-r border-dbs-border shadow-lg z-40 flex flex-col">
+      <div className="fixed top-0 left-0 h-full w-72 bg-white border-r border-apa-border shadow-lg z-40 flex flex-col">
         {/* Header */}
-        <div className="flex items-center justify-between px-4 py-3.5 border-b border-dbs-border flex-shrink-0">
+        <div className="flex items-center justify-between px-4 py-3.5 border-b border-apa-border flex-shrink-0">
           <div className="flex items-center gap-2">
-            <History size={14} className="text-dbs-red" />
-            <span className="text-sm font-semibold text-dbs-text">Chat History</span>
+            <History size={14} className="text-apa-red" />
+            <span className="text-sm font-semibold text-apa-text">Chat History</span>
           </div>
           <button
             onClick={onClose}
-            className="text-dbs-muted hover:text-dbs-text transition-colors"
+            className="text-apa-muted hover:text-apa-text transition-colors"
           >
             <X size={15} />
           </button>
@@ -306,9 +311,9 @@ function HistorySidebar({ sessions, currentId, onLoad, onDelete, onClose }) {
         <div className="flex-1 overflow-y-auto py-2">
           {sessions.length === 0 ? (
             <div className="px-4 py-8 text-center">
-              <History size={28} className="text-dbs-faint mx-auto mb-2" />
-              <p className="text-xs text-dbs-faint">No past conversations yet.</p>
-              <p className="text-[10px] text-dbs-faint mt-1">Start chatting and they'll appear here.</p>
+              <History size={28} className="text-apa-faint mx-auto mb-2" />
+              <p className="text-xs text-apa-faint">No past conversations yet.</p>
+              <p className="text-[10px] text-apa-faint mt-1">Start chatting and they'll appear here.</p>
             </div>
           ) : (
             sessions.map(s => {
@@ -318,22 +323,22 @@ function HistorySidebar({ sessions, currentId, onLoad, onDelete, onClose }) {
                   key={s.id}
                   className={`group flex items-start gap-2 px-3 py-2.5 mx-1 rounded cursor-pointer transition-colors ${
                     isActive
-                      ? 'bg-dbs-red-light border border-dbs-red/20'
+                      ? 'bg-apa-red-light border border-apa-red/20'
                       : 'hover:bg-gray-50'
                   }`}
                   onClick={() => { onLoad(s); onClose() }}
                 >
                   <div className="flex-1 min-w-0">
-                    <p className={`text-xs font-medium truncate leading-snug ${isActive ? 'text-dbs-red' : 'text-dbs-text'}`}>
+                    <p className={`text-xs font-medium truncate leading-snug ${isActive ? 'text-apa-red' : 'text-apa-text'}`}>
                       {sessionTitle(s.messages)}
                     </p>
-                    <p className="text-[10px] text-dbs-faint mt-0.5">
+                    <p className="text-[10px] text-apa-faint mt-0.5">
                       {formatDate(s.updatedAt)} · {s.messages.length} msg{s.messages.length !== 1 ? 's' : ''}
                     </p>
                   </div>
                   <button
                     onClick={e => { e.stopPropagation(); onDelete(s.id) }}
-                    className="flex-shrink-0 mt-0.5 text-dbs-faint hover:text-dbs-red opacity-0 group-hover:opacity-100 transition-all"
+                    className="flex-shrink-0 mt-0.5 text-apa-faint hover:text-apa-red opacity-0 group-hover:opacity-100 transition-all"
                     title="Delete"
                   >
                     <Trash2 size={12} />
@@ -344,7 +349,7 @@ function HistorySidebar({ sessions, currentId, onLoad, onDelete, onClose }) {
           )}
         </div>
 
-        <div className="px-4 py-3 border-t border-dbs-border text-[10px] text-dbs-faint text-center">
+        <div className="px-4 py-3 border-t border-apa-border text-[10px] text-apa-faint text-center">
           Stored locally · Up to {MAX_SESSIONS} conversations
         </div>
       </div>
@@ -378,12 +383,12 @@ function PortfolioSidebar({ currentUser, onClose }) {
     <>
       {/* Header */}
       <div
-        className="px-4 py-3 border-b border-dbs-border flex items-center justify-between flex-shrink-0"
+        className="px-4 py-3 border-b border-apa-border flex items-center justify-between flex-shrink-0"
         style={{ background: `linear-gradient(135deg, ${currentUser.color}20 0%, ${currentUser.color}08 100%)` }}
       >
         <div className="flex items-center gap-2">
           <div className="w-1.5 h-4 rounded-full" style={{ backgroundColor: currentUser.color }} />
-          <span className="text-xs font-semibold text-dbs-text uppercase tracking-wider">Transaction History</span>
+          <span className="text-xs font-semibold text-apa-text uppercase tracking-wider">Transaction History</span>
         </div>
         <div className="flex items-center gap-2">
           <span
@@ -393,7 +398,7 @@ function PortfolioSidebar({ currentUser, onClose }) {
             {currentUser.transactions.length} total
           </span>
           {onClose && (
-            <button onClick={onClose} className="text-dbs-muted hover:text-dbs-text transition-colors">
+            <button onClick={onClose} className="text-apa-muted hover:text-apa-text transition-colors">
               <X size={14} />
             </button>
           )}
@@ -401,15 +406,15 @@ function PortfolioSidebar({ currentUser, onClose }) {
       </div>
 
       {/* Total Assets */}
-      <div className="px-4 py-3 border-b border-dbs-border flex-shrink-0">
-        <div className="text-[10px] text-dbs-faint uppercase tracking-wider mb-1">Total Assets</div>
+      <div className="px-4 py-3 border-b border-apa-border flex-shrink-0">
+        <div className="text-[10px] text-apa-faint uppercase tracking-wider mb-1">Total Assets</div>
         {Object.entries(totals).map(([ccy, val]) => (
-          <div key={ccy} className="text-sm font-semibold font-mono text-dbs-text">{ccy} {val.toLocaleString()}</div>
+          <div key={ccy} className="text-sm font-semibold font-mono text-apa-text">{ccy} {val.toLocaleString()}</div>
         ))}
       </div>
 
       {/* Transactions */}
-      <div className="flex-1 divide-y divide-dbs-border/40 overflow-y-auto">
+      <div className="flex-1 divide-y divide-apa-border/40 overflow-y-auto">
         {currentUser.transactions.slice().reverse().map((tx, i) => {
           const typeStyle = TX_STYLE[tx.type] || { bg: '#f3f4f6', color: '#6b7280' }
           return (
@@ -422,22 +427,22 @@ function PortfolioSidebar({ currentUser, onClose }) {
                   >
                     {tx.type}
                   </span>
-                  <span className="text-xs font-semibold text-dbs-text">{tx.asset}</span>
+                  <span className="text-xs font-semibold text-apa-text">{tx.asset}</span>
                 </div>
-                <span className="text-xs font-mono text-dbs-text">{tx.valueFmt}</span>
+                <span className="text-xs font-mono text-apa-text">{tx.valueFmt}</span>
               </div>
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
                   {tx.amount > 0 && (
-                    <span className="text-[10px] text-dbs-muted font-mono">
+                    <span className="text-[10px] text-apa-muted font-mono">
                       {tx.amount.toLocaleString()} {tx.asset.split('-')[0]}
                     </span>
                   )}
                   {tx.note && (
-                    <span className="text-[10px] text-dbs-faint">{tx.note}</span>
+                    <span className="text-[10px] text-apa-faint">{tx.note}</span>
                   )}
                 </div>
-                <span className="text-[10px] text-dbs-faint">{tx.date}</span>
+                <span className="text-[10px] text-apa-faint">{tx.date}</span>
               </div>
             </div>
           )
@@ -565,33 +570,33 @@ export default function App() {
   const isEmpty = messages.length === 0
 
   return (
-    <div className="flex flex-col h-screen bg-dbs-bg overflow-hidden">
+    <div className="flex flex-col h-screen bg-apa-bg overflow-hidden">
 
       {/* ── Top accent bar ── */}
-      <div className="flex-shrink-0 h-[3px] bg-dbs-red" />
+      <div className="flex-shrink-0 h-[3px]" style={{ background: 'linear-gradient(90deg, #6B8B9A 0%, #8AAAB8 50%, #6B8B9A 100%)' }} />
 
       {/* ── Header ── */}
-      <header className="flex-shrink-0 bg-white border-b border-dbs-border px-3 sm:px-5 py-3 flex items-center justify-between shadow-dbs-md">
+      <header className="flex-shrink-0 bg-white border-b border-apa-border px-3 sm:px-5 py-3 flex items-center justify-between shadow-apa-md">
         <div className="flex items-center gap-2 sm:gap-3">
           {/* Logo */}
-          <DbsLogo />
-          <div className="hidden sm:block w-px h-6 bg-dbs-border" />
+          <ApaLogo />
+          <div className="hidden sm:block w-px h-6 bg-apa-border" />
           <div>
             <div className="flex items-center gap-1.5">
-              <span className="text-sm font-semibold text-dbs-text">DDEx</span>
-              <span className="text-[10px] px-1.5 py-0.5 bg-dbs-red-light text-dbs-red rounded font-mono border border-dbs-red/20 font-semibold">
+              <span className="text-sm font-semibold text-apa-text" style={{ fontFamily: '"Cormorant Garamond", Georgia, serif', fontSize: '15px', letterSpacing: '0.3px' }}>APA</span>
+              <span className="text-[10px] px-1.5 py-0.5 bg-apa-red-light text-apa-red rounded font-mono border border-apa-red/20 font-semibold">
                 AI
               </span>
             </div>
-            <div className="hidden sm:block text-[10px] text-dbs-muted -mt-0.5">Digital Exchange Companion</div>
+            <div className="hidden sm:block text-[10px] text-apa-muted -mt-0.5" style={{ letterSpacing: '0.5px' }}>AI Companion</div>
           </div>
 
-          <div className="hidden sm:block w-px h-5 bg-dbs-border" />
+          <div className="hidden sm:block w-px h-5 bg-apa-border" />
 
           {/* Live indicator — hidden on mobile */}
           <div className="hidden sm:flex items-center gap-1.5">
             <div className={`w-1.5 h-1.5 rounded-full ${pricesLoading ? 'bg-yellow-500' : 'bg-green-500 live-dot'}`} />
-            <span className="text-[10px] text-dbs-muted">
+            <span className="text-[10px] text-apa-muted">
               {pricesLoading ? 'Connecting…' : 'Live'}
             </span>
           </div>
@@ -604,7 +609,7 @@ export default function App() {
           {currentUser.transactions.length > 0 && (
             <button
               onClick={() => setShowPortfolio(true)}
-              className="md:hidden flex items-center gap-1.5 text-[11px] text-dbs-muted hover:text-dbs-text transition-colors"
+              className="md:hidden flex items-center gap-1.5 text-[11px] text-apa-muted hover:text-apa-text transition-colors"
               title="View portfolio"
             >
               <span>Portfolio</span>
@@ -614,7 +619,7 @@ export default function App() {
           {/* About button */}
           <button
             onClick={() => setShowInfo(true)}
-            className="flex items-center gap-1.5 text-[11px] text-dbs-muted hover:text-dbs-text transition-colors"
+            className="flex items-center gap-1.5 text-[11px] text-apa-muted hover:text-apa-text transition-colors"
             title="About DDEx"
           >
             <Info size={13} />
@@ -624,7 +629,7 @@ export default function App() {
           {/* History button */}
           <button
             onClick={() => setShowHistory(true)}
-            className="flex items-center gap-1.5 text-[11px] text-dbs-muted hover:text-dbs-text transition-colors"
+            className="flex items-center gap-1.5 text-[11px] text-apa-muted hover:text-apa-text transition-colors"
             title="Chat history"
           >
             <History size={13} />
@@ -634,14 +639,14 @@ export default function App() {
           {messages.length > 0 && (
             <button
               onClick={reset}
-              className="flex items-center gap-1.5 text-[11px] text-dbs-muted hover:text-dbs-text transition-colors"
+              className="flex items-center gap-1.5 text-[11px] text-apa-muted hover:text-apa-text transition-colors"
             >
               <RotateCcw size={11} />
               <span className="hidden sm:inline">New chat</span>
             </button>
           )}
 
-          <div className="w-px h-5 bg-dbs-border" />
+          <div className="w-px h-5 bg-apa-border" />
 
           {/* User switcher */}
           <UserSwitcher currentUser={currentUser} onSwitch={handleUserSwitch} />
@@ -664,18 +669,18 @@ export default function App() {
         <div className="fixed inset-0 z-50 flex">
           <div className="absolute inset-0 bg-black/30" onClick={() => setShowInfo(false)} />
           <div className="relative mr-auto w-full max-w-sm bg-white h-full shadow-xl flex flex-col overflow-y-auto" style={{ maxWidth: 'min(384px, 100vw)' }}>
-            <div className="flex items-center justify-between px-5 py-4 border-b border-dbs-border">
+            <div className="flex items-center justify-between px-5 py-4 border-b border-apa-border">
               <div className="flex items-center gap-2">
-                <div className="w-1 h-4 bg-dbs-red rounded-full" />
-                <span className="text-sm font-semibold text-dbs-text">About DBS Digital Exchange</span>
+                <div className="w-1 h-4 bg-apa-red rounded-full" />
+                <span className="text-sm font-semibold text-apa-text">About Atlantic Partners Asia</span>
               </div>
-              <button onClick={() => setShowInfo(false)} className="text-dbs-muted hover:text-dbs-text">
+              <button onClick={() => setShowInfo(false)} className="text-apa-muted hover:text-apa-text">
                 <X size={16} />
               </button>
             </div>
             <div className="p-5 space-y-5 flex-1">
-              <p className="text-sm text-dbs-muted leading-relaxed">
-                DBS Digital Exchange (DDEx) is an institutional-grade platform to <strong className="text-dbs-text">tokenise, trade and custody digital assets</strong>. Built on the trust and infrastructure of DBS Bank, DDEx enables accredited and institutional investors to access fully regulated digital asset services — from cryptocurrency trading to security token offerings.
+              <p className="text-sm text-apa-muted leading-relaxed">
+                Atlantic Partners Asia (APA) is a leading cross-border financial services firm specialising in <strong className="text-apa-text">digital assets, structured products and capital markets</strong>. APA connects institutional investors across Asia with world-class investment opportunities — from digital asset strategies to tokenised securities and structured notes.
               </p>
               <div className="grid grid-cols-3 gap-3">
                 {[
@@ -683,16 +688,16 @@ export default function App() {
                   { stat: '8', label: 'Cryptocurrencies' },
                   { stat: '2', label: 'Fiat Currencies' },
                 ].map(({ stat, label }) => (
-                  <div key={label} className="bg-dbs-red-light border border-dbs-red/20 rounded p-3 text-center">
-                    <div className="text-lg font-bold text-dbs-red">{stat}</div>
-                    <div className="text-[10px] text-dbs-muted mt-0.5">{label}</div>
+                  <div key={label} className="bg-apa-red-light border border-apa-red/20 rounded p-3 text-center">
+                    <div className="text-lg font-bold text-apa-red">{stat}</div>
+                    <div className="text-[10px] text-apa-muted mt-0.5">{label}</div>
                   </div>
                 ))}
               </div>
               <div>
                 <div className="flex items-center gap-2 mb-3">
-                  <div className="w-1 h-4 bg-dbs-red/50 rounded-full" />
-                  <span className="text-xs font-semibold text-dbs-text uppercase tracking-wider">Services</span>
+                  <div className="w-1 h-4 bg-apa-red/50 rounded-full" />
+                  <span className="text-xs font-semibold text-apa-text uppercase tracking-wider">Services</span>
                 </div>
                 <div className="space-y-3">
                   {[
@@ -700,28 +705,28 @@ export default function App() {
                     { icon: '📋', title: 'Request for Quote', desc: 'Execute large block trades with minimal price slippage via RFQ' },
                     { icon: '🔐', title: 'Security Tokens', desc: 'Tokenised traditional securities with blockchain-based settlement' },
                   ].map(({ icon, title, desc }) => (
-                    <div key={title} className="bg-white border border-dbs-border rounded p-4">
+                    <div key={title} className="bg-white border border-apa-border rounded p-4">
                       <div className="text-xl mb-2">{icon}</div>
-                      <div className="text-xs font-semibold text-dbs-text mb-1">{title}</div>
-                      <div className="text-[11px] text-dbs-muted leading-relaxed">{desc}</div>
+                      <div className="text-xs font-semibold text-apa-text mb-1">{title}</div>
+                      <div className="text-[11px] text-apa-muted leading-relaxed">{desc}</div>
                     </div>
                   ))}
                 </div>
               </div>
               <div>
                 <div className="flex items-center gap-2 mb-2">
-                  <div className="w-1 h-4 bg-dbs-red/50 rounded-full" />
-                  <span className="text-xs font-semibold text-dbs-muted uppercase tracking-wider">Eligibility</span>
+                  <div className="w-1 h-4 bg-apa-red/50 rounded-full" />
+                  <span className="text-xs font-semibold text-apa-muted uppercase tracking-wider">Eligibility</span>
                 </div>
                 <div className="flex flex-wrap gap-2">
                   {['Financial Institutions', 'Corporate Accredited Investors', 'Family Offices', 'Professional Market Makers', 'DBS Private Bank Clients'].map(label => (
-                    <span key={label} className="text-[11px] px-2.5 py-1 bg-dbs-red-light border border-dbs-red/20 rounded text-dbs-muted">
+                    <span key={label} className="text-[11px] px-2.5 py-1 bg-apa-red-light border border-apa-red/20 rounded text-apa-muted">
                       {label}
                     </span>
                   ))}
                 </div>
               </div>
-              <p className="text-[10px] text-dbs-faint leading-relaxed text-center">
+              <p className="text-[10px] text-apa-faint leading-relaxed text-center">
                 For accredited and institutional investors only · Not financial advice · Capital at risk · MAS-regulated · Not available to U.S. persons
               </p>
             </div>
@@ -733,26 +738,30 @@ export default function App() {
       <div className="flex-1 flex overflow-hidden">
 
         {/* ── Messages ── */}
-        <div className="flex-1 overflow-y-auto dbs-dot-grid">
+        <div className="flex-1 overflow-y-auto apa-dot-grid">
           {isEmpty ? (
 
             /* Landing */
             <div className="relative max-w-2xl mx-auto px-4 py-8 sm:py-14">
               {/* Radial gradient overlay */}
-              <div className="absolute inset-x-0 top-0 h-80 pointer-events-none" style={{ background: 'radial-gradient(ellipse at 50% 0%, rgba(218,41,28,0.06) 0%, transparent 65%)' }} />
+              <div className="absolute inset-x-0 top-0 h-80 pointer-events-none" style={{ background: 'radial-gradient(ellipse at 50% 0%, rgba(107,139,154,0.08) 0%, transparent 65%)' }} />
 
               {/* Hero — centered */}
               <div className="relative text-center mb-7 sm:mb-10">
-                <div className="w-16 h-16 sm:w-20 sm:h-20 bg-dbs-red rounded-xl flex items-center justify-center mx-auto mb-4 sm:mb-5 shadow-dbs-md">
-                  <span className="text-white text-2xl sm:text-3xl font-bold tracking-tight">D</span>
+                <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-xl flex items-center justify-center mx-auto mb-4 sm:mb-5 shadow-apa-md" style={{ background: '#6B8B9A' }}>
+                  <svg width="48" height="36" viewBox="0 0 90 70" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M0 62 L14 8 L20 8 L34 62 L28 62 L24 46 L10 46 L6 62 Z M12 40 L22 40 L17 18 Z" fill="white" />
+                    <path d="M38 8 L38 62 L44 62 L44 38 L54 38 C62 38 67 33 67 25 C67 16 62 8 54 8 Z M44 14 L53 14 C58 14 61 18 61 25 C61 32 58 32 53 32 L44 32 Z" fill="white" />
+                    <path d="M56 62 L70 8 L76 8 L90 62 L84 62 L80 46 L66 46 L62 62 Z M68 40 L78 40 L73 18 Z" fill="white" />
+                  </svg>
                 </div>
-                <h1 className="text-2xl sm:text-3xl font-bold text-dbs-text mb-2 tracking-tight">
+                <h1 className="text-2xl sm:text-3xl font-bold text-apa-text mb-2 tracking-tight" style={{ fontFamily: '"Cormorant Garamond", Georgia, serif', fontWeight: 600 }}>
                   {currentUser.id === 'new'
-                    ? 'Welcome to DDEx AI Companion'
+                    ? 'Welcome to APA AI Companion'
                     : `Welcome back, ${currentUser.name.split(' ')[0]}`}
                 </h1>
-                <div className="w-12 h-0.5 bg-dbs-red mx-auto mb-3" />
-                <p className="text-sm text-dbs-muted leading-relaxed max-w-md mx-auto">
+                <div className="w-12 h-0.5 bg-apa-red mx-auto mb-3" />
+                <p className="text-sm text-apa-muted leading-relaxed max-w-md mx-auto">
                   {currentUser.id === 'new'
                     ? 'Your intelligent guide to DBS Digital Exchange — Asia\'s first bank-backed digital asset ecosystem. Ask about products, get live prices, run technical analysis, or explore the full tokenised asset universe.'
                     : currentUser.id === 'alex'
@@ -767,7 +776,7 @@ export default function App() {
               {/* Suggested prompts */}
               <div className="space-y-2 mb-5">
                 <div className="flex items-center justify-center gap-2 mb-3">
-                  <div className="text-[10px] text-dbs-faint uppercase tracking-wider">Suggested for you</div>
+                  <div className="text-[10px] text-apa-faint uppercase tracking-wider">Suggested for you</div>
                   {currentUser.id !== 'new' && (
                     <div
                       className="text-[10px] px-2 py-0.5 rounded-full font-semibold"
@@ -782,15 +791,15 @@ export default function App() {
                     key={i}
                     onClick={() => handleSend(prompt)}
                     disabled={loading}
-                    className="group w-full flex items-center justify-between gap-3 text-left px-4 py-3.5 bg-white hover:bg-dbs-red-light border border-dbs-border hover:border-dbs-red/40 rounded-lg text-sm text-dbs-muted hover:text-dbs-text transition-all disabled:opacity-50 shadow-dbs"
+                    className="group w-full flex items-center justify-between gap-3 text-left px-4 py-3.5 bg-white hover:bg-apa-red-light border border-apa-border hover:border-apa-red/40 rounded-lg text-sm text-apa-muted hover:text-apa-text transition-all disabled:opacity-50 shadow-apa"
                   >
                     <div className="flex items-center gap-3">
-                      <div className="w-5 h-5 rounded bg-dbs-red/10 flex items-center justify-center flex-shrink-0 group-hover:bg-dbs-red/20 transition-colors">
-                        <span className="text-dbs-red text-[10px] font-bold">{i + 1}</span>
+                      <div className="w-5 h-5 rounded bg-apa-red/10 flex items-center justify-center flex-shrink-0 group-hover:bg-apa-red/20 transition-colors">
+                        <span className="text-apa-red text-[10px] font-bold">{i + 1}</span>
                       </div>
                       <span>{prompt}</span>
                     </div>
-                    <span className="text-dbs-faint group-hover:text-dbs-red transition-colors flex-shrink-0 text-xs">→</span>
+                    <span className="text-apa-faint group-hover:text-apa-red transition-colors flex-shrink-0 text-xs">→</span>
                   </button>
                 ))}
               </div>
@@ -823,13 +832,13 @@ export default function App() {
             {showPortfolio && (
               <div className="md:hidden fixed inset-0 z-40 flex justify-end">
                 <div className="absolute inset-0 bg-black/20" onClick={() => setShowPortfolio(false)} />
-                <div className="relative w-72 bg-white border-l border-dbs-border shadow-lg flex flex-col">
+                <div className="relative w-72 bg-white border-l border-apa-border shadow-lg flex flex-col">
                   <PortfolioSidebar currentUser={currentUser} onClose={() => setShowPortfolio(false)} />
                 </div>
               </div>
             )}
             {/* Desktop permanent sidebar */}
-            <div className="hidden md:flex flex-col w-72 flex-shrink-0 border-l border-dbs-border bg-white overflow-y-auto">
+            <div className="hidden md:flex flex-col w-72 flex-shrink-0 border-l border-apa-border bg-white overflow-y-auto">
               <PortfolioSidebar currentUser={currentUser} onClose={null} />
             </div>
           </>
@@ -838,9 +847,9 @@ export default function App() {
       </div>
 
       {/* ── Input ── */}
-      <div className="flex-shrink-0 bg-white border-t border-dbs-border px-4 py-4">
+      <div className="flex-shrink-0 bg-white border-t border-apa-border px-4 py-4">
         <div className="max-w-3xl mx-auto">
-          <div className="flex items-end gap-3 bg-white border border-dbs-border rounded-2xl px-5 py-3 focus-within:border-dbs-red focus-within:ring-2 focus-within:ring-dbs-red/20 transition-colors shadow-dbs">
+          <div className="flex items-end gap-3 bg-white border border-apa-border rounded-2xl px-5 py-3 focus-within:border-apa-red focus-within:ring-2 focus-within:ring-apa-red/20 transition-colors shadow-apa">
             <textarea
               ref={inputRef}
               value={input}
@@ -852,28 +861,28 @@ export default function App() {
               onKeyDown={handleKeyDown}
               placeholder="Ask about products, prices, analysis…"
               rows={1}
-              className="flex-1 bg-transparent text-sm text-dbs-text placeholder-dbs-faint resize-none outline-none leading-relaxed"
+              className="flex-1 bg-transparent text-sm text-apa-text placeholder-apa-faint resize-none outline-none leading-relaxed"
               style={{ scrollbarWidth: 'none', minHeight: '22px' }}
               autoFocus
             />
             <button
               onClick={() => handleSend()}
               disabled={!input.trim() || loading}
-              className="flex-shrink-0 w-8 h-8 bg-dbs-red hover:bg-dbs-red-dark disabled:bg-dbs-border disabled:text-dbs-muted text-white rounded flex items-center justify-center transition-colors disabled:cursor-not-allowed"
+              className="flex-shrink-0 w-8 h-8 bg-apa-red hover:bg-apa-red-dark disabled:bg-apa-border disabled:text-apa-muted text-white rounded flex items-center justify-center transition-colors disabled:cursor-not-allowed"
             >
               {loading
-                ? <div className="w-3 h-3 border border-dbs-muted border-t-transparent rounded-full animate-spin" />
+                ? <div className="w-3 h-3 border border-apa-muted border-t-transparent rounded-full animate-spin" />
                 : <Send size={13} />
               }
             </button>
           </div>
           <div className="flex justify-end mt-1.5">
             <div className="group relative">
-              <button className="flex items-center gap-1 text-dbs-faint hover:text-dbs-muted transition-colors">
+              <button className="flex items-center gap-1 text-apa-faint hover:text-apa-muted transition-colors">
                 <Info size={11} />
                 <span className="text-[10px]">Disclaimer</span>
               </button>
-              <div className="absolute bottom-full right-0 mb-2 w-72 bg-dbs-text text-white text-[10px] leading-relaxed px-3 py-2 rounded shadow-lg opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity z-10">
+              <div className="absolute bottom-full right-0 mb-2 w-72 bg-apa-text text-white text-[10px] leading-relaxed px-3 py-2 rounded shadow-lg opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity z-10">
                 For accredited and institutional investors only · Not financial advice · Capital at risk · MAS-regulated · Not available to U.S. persons
               </div>
             </div>
